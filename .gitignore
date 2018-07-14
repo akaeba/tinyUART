@@ -19,7 +19,7 @@
 # Modelsim directory
 # Exclude all subdirectories, f.e. compiled hdl code
 #---------------------------------------------------
-03_sim/*/
+04_sim/*/
 #
 
 
