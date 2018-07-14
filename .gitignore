@@ -1,0 +1,32 @@
+#************************************************************************
+# License		: LGPLv3
+#
+# Author		: Andreas Kaeberlein
+# Email			: andreas.kaeberlein@web.de	
+#
+# File			: .gitignore.
+#
+# Description	: preserve files for repo check-in
+#
+# Sources		: https://git-scm.com/docs/gitignore
+#
+# on			: 2017-02-23
+#************************************************************************
+
+
+
+#
+# Modelsim directory
+# Exclude all subdirectories, f.e. compiled hdl code
+#---------------------------------------------------
+03_sim/*/
+#
+
+
+#
+# Exceptions
+#-----------
+!.gitignore.
+!.gitconfig.
+**/!.gitkeep.
+#
