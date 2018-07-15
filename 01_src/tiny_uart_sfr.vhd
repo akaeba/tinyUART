@@ -1,6 +1,6 @@
 --************************************************************************
 -- @copyright   LGPLv3
--- @authors     Kaeberlein
+-- @author      Kaeberlein
 --
 -- @file        tiny_uart_sfr.vhd
 -- @note        VHDL'93
