@@ -57,7 +57,7 @@ architecture rtl of tiny_uart_cntr is
 begin
 
     ----------------------------------------------
-    -- shift register
+    -- counter
     p_cntr : process ( R, C )
     begin
         if ( R = '1' ) then
