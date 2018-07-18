@@ -31,11 +31,11 @@ generic (
 port    (
             -- Clock/Reset
             R       : in    std_logic;                              --! asnychon reset
-            C       : in    std_logic;                              --! master clock
+            C       : in    std_logic;                              --! clock, rising edge
             -- Control
             LD      : in    std_logic;                              --! load value
             EN      : in    std_logic;                              --! enable counting
-            UP      : in    std_logic;                              --! count direction;    '1' : upcounting; '0' downcounting
+            UP      : in    std_logic;                              --! count direction;    '1' : increment; '0' : decrement
             -- Value
             SET     : in    std_logic_vector(WIDTH-1 downto 0);     --! load value
             CNT     : out   std_logic_vector(WIDTH-1 downto 0)      --! actual count value
