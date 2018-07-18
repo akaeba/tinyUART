@@ -5,8 +5,8 @@
 -- @file        tiny_uart_parity.vhd
 -- @note        VHDL'93
 --
--- @brief       Counter
--- @details     synchronous counter, unsigned bit encoding
+-- @brief       parity
+-- @details     combinatoric modul for even/odd parity calculation
 --
 -- @date        2018-07-17
 -- @version     0.1
