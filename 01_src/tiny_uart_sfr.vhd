@@ -1,6 +1,6 @@
 --************************************************************************
 -- @copyright   LGPLv3
--- @author      Kaeberlein
+-- @author      akae
 --
 -- @file        tiny_uart_sfr.vhd
 -- @note        VHDL'93
@@ -32,7 +32,7 @@ generic (
 port    (
             -- Clock/Reset
             R       : in    std_logic;                              --! asnychon reset
-            C       : in    std_logic;                              --! master clock
+            C       : in    std_logic;                              --! clock, rising edge
             -- Control
             LD      : in    std_logic;                              --! load parallel data input in shift register
             EN      : in    std_logic;                              --! enable shift registers forward shift

@@ -1,6 +1,6 @@
 --************************************************************************
 -- @copyright   LGPLv3
--- @author      Kaeberlein
+-- @author      akae
 --
 -- @file        tiny_uart_cntr.vhd
 -- @note        VHDL'93
