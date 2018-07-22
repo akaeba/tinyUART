@@ -6,7 +6,7 @@
 -- @note        VHDL'93
 --
 -- @brief       TX
--- @details     uart transmitter with single state buffer register
+-- @details     uart transmitter with single stage buffer register
 --
 -- @date        2018-07-18
 -- @version     0.1
@@ -56,11 +56,11 @@ architecture rtl of tiny_uart_tx is
 
     -----------------------------
     -- Typs
-    type t_tiny_uart_tx is  (
-                                IDLE_S, --! IDLE state
-                                LD_S,   --! load new data
-                                TX_S    --! transmit data
-                            );
+        type t_tiny_uart_tx is  (
+                                    IDLE_S, --! IDLE state
+                                    LD_S,   --! load new data
+                                    TX_S    --! transmit data
+                                );
     -----------------------------
 
 
