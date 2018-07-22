@@ -39,7 +39,7 @@ port    (
             R       : in    std_logic;                          --! asnychon reset
             C       : in    std_logic;                          --! master clock
             -- Control
-            WR      : in    std_logic;                          --! Write new data
+            LD      : in    std_logic;                          --! Write new data
             MTY     : out   std_logic;                          --! buffer register empty
             BSY     : out   std_logic;                          --! shift register active
             -- Data
@@ -67,9 +67,7 @@ architecture rtl of tiny_uart_tx is
     -----------------------------
     -- Constants
         constant C_BAUD_CNTR_W  : integer                                   := integer(ceil(log2(real(CLKDIV+1))));                             --! counter bit width
-        constant C_BIT_CNTR_NUM : integer                                   := DWIDTH+STOPBIT+1+1+1;                                            --! +1 for start, +1 for parity, +1 to avoid overflows
-        constant C_BIT_CNTR_W   : integer                                   := integer(ceil(log2(real(C_BIT_CNTR_NUM))));                       --! calculate counter bit width
-        constant C_BIT_CNTR_PST : std_logic_vector(C_BIT_CNTR_W-1 downto 0) := std_logic_vector(to_unsigned(C_BIT_CNTR_NUM-1, C_BIT_CNTR_W));   --! bit counter preset
+        constant C_BIT_CNTR_W   : integer                                   := integer(ceil(log2(real(DWIDTH+STOPBIT+1+1+1))));                 --! calc counter width; +1 for start, +1 for parity, +1 to avoid overflows
         constant C_SFR_W        : integer                                   := integer(DWIDTH+1+1);                                             --! +1 for start, +1 for parity
     -----------------------------
 
@@ -80,6 +78,7 @@ architecture rtl of tiny_uart_tx is
         signal baud_cntr_ovl    : std_logic;                                    --! reload baud rate counter
         signal baud_cntr_ena    : std_logic;                                    --! enable counter
         signal bit_cntr_cnt     : std_logic_vector(C_BIT_CNTR_W-1 downto 0);    --! bit counter count
+        signal bit_cntr_pst     : std_logic_vector(C_BIT_CNTR_W-1 downto 0);    --! bit counter preset
         signal data_reg         : std_logic_vector(DWIDTH-1 downto 0);          --! data hold reg
         signal data_reg_new     : std_logic;                                    --! flag for new data available
         signal current_state    : t_tiny_uart_tx;                               --! fsm states
@@ -101,14 +100,14 @@ begin
                         R   => R,               --! asnychon reset
                         C   => C,               --! clock
                         LD  => baud_cntr_ovl,   --! load value
-                        EN  => baud_cntr_ena,
+                        EN  => baud_cntr_ena,   --! enable counting
                         UP  => '1',             --! count direction;    '1' : upcounting; '0' downcounting
                         SET => (others => '0'), --! load value
                         CNT => baud_cntr_cnt    --! actual count value
                     );
         -- help logic
         baud_cntr_ovl <= '1' when ( to_01(unsigned(baud_cntr_cnt)) > CLKDIV-1 ) else '0';   --! counter overflow
-        baud_cntr_ena <= '1' when ( current_state = TX_S) else '0';                             --! transmission active
+        baud_cntr_ena <= '1' when ( current_state = TX_S) else '0';                         --! transmission active
     ----------------------------------------------
 
 
@@ -124,9 +123,15 @@ begin
                         LD  => ld_tx,           --! load value
                         EN  => baud_cntr_ovl,   --! new bit released
                         UP  => '0',             --! count direction;    '1' : upcounting; '0' downcounting
-                        SET => C_BIT_CNTR_PST,  --! load value
+                        SET => bit_cntr_pst,    --! load value
                         CNT => bit_cntr_cnt     --! actual count value
                     );
+        -- bit counter preset
+        --   -1: counter counts downto 0
+        --   +1: startbit
+        --   ENAPAR = true: +1: parity bit
+        --
+        bit_cntr_pst <= std_logic_vector(to_unsigned(DWIDTH+STOPBIT+1+1-1, bit_cntr_pst'length))  when ( ENAPAR = true ) else std_logic_vector(to_unsigned(DWIDTH+STOPBIT+1-1, bit_cntr_pst'length));
     ----------------------------------------------
 
 
@@ -184,7 +189,7 @@ begin
 
         elsif ( rising_edge(C) ) then
             -- data input handler
-            if ( (WR = '1') and (data_reg_new = '0') ) then
+            if ( (LD = '1') and (data_reg_new = '0') ) then
                 data_reg        <= DI;      --! capture input data
                 data_reg_new    <= '1';     --! set new data marker
             elsif ( ld_tx = '1' ) then
@@ -248,7 +253,7 @@ begin
     ----------------------------------------------
     -- assignements
     MTY <= not data_reg_new;    --! signalling empty buffer register
-    BSY <= '0' when ( current_state = IDLE_S ) else '0';
+    BSY <= '0' when ( current_state = IDLE_S ) else '1';
     ----------------------------------------------
 
 end architecture rtl;
