@@ -65,7 +65,7 @@ begin
         elsif ( rising_edge(C) ) then
             if ( LD = '1' ) then
                 cntr_q  <=  unsigned(SET);
-            else
+            elsif ( EN = '1' ) then
                 if ( UP = '1' ) then
                     cntr_q  <= cntr_q + 1;
                 else
