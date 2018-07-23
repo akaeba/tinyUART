@@ -52,7 +52,8 @@ architecture sim of tiny_uart_tx_tb is
 		constant tskew	: time	:= 1 ns;	--! data skew
 		
 		-- Test
-		constant do_test_0	: boolean := true;	--! test0:
+		constant do_test_0	: boolean := true;	--! test0: send single data word and check
+		constant do_test_1	: boolean := true;	--! test0: send double data word and check
 		
 	-----------------------------
 	
@@ -134,8 +135,14 @@ begin
 			wait for (CLKDIV/2)*tclk;
 			for i in buf'high downto buf'low loop
 				wait until rising_edge(C); wait for tskew;
-				buf(i)	:= SO;	--! capture serial output
+				buf(i)	:= SO;				--! capture serial output
 				wait for (CLKDIV)*tclk;
+				assert ( MTY'STABLE(CLKDIV*tclk) and MTY = '1' ) report "  Empty flag not stable and/or not empty" severity warning;
+				if not ( MTY'STABLE(CLKDIV*tclk) and MTY = '1' ) then good := false; end if;
+				if ( i > 0 ) then
+					assert ( BSY'STABLE(CLKDIV*tclk) and BSY = '1' ) report "  Busy flag not stable and/or not busy" severity warning;
+					if not ( BSY'STABLE(CLKDIV*tclk) and BSY = '1' ) then good := false; end if;
+				end if;
 			end loop;
 			assert ( buf(9) = '0' ) report "  Error: Startbit expected" severity warning;
 			if not ( buf(9) = '0' ) then good := false; end if;
@@ -143,14 +150,20 @@ begin
 			if not ( buf(0) = '1' ) then good := false; end if;
 			assert ( buf(8 downto 1) = x"55" ) report "  Error: Dataword expected 0x55" severity warning;
 			if not ( buf(8 downto 1) = x"55" ) then good := false; end if;
-			
-			
-			
-		
 		end if;
 		-------------------------
 		
 		
+		-------------------------
+		-- Test0: Send single data
+		------------------------- 
+		if ( DO_ALL_TEST or do_test_1 ) then
+			Report "Test0: Send double data word";
+			
+			
+			
+		end if;
+		-------------------------
 	
 	
 	
