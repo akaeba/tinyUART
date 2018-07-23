@@ -28,7 +28,7 @@ library work;
 -- testbench
 entity tiny_uart_tx_tb is
 generic	(
-			DO_ALL_TEST	: boolean	:= true		--! switch for enabling all tests
+			DO_ALL_TEST	: boolean	:= false		--! switch for enabling all tests
 		);
 end entity tiny_uart_tx_tb;
 --------------------------------------------------------------------------
@@ -53,7 +53,7 @@ architecture sim of tiny_uart_tx_tb is
 		
 		-- Test
 		constant do_test_0	: boolean := true;	--! test0: send single data word and check
-		constant do_test_1	: boolean := true;	--! test0: send double data word and check
+		constant do_test_1	: boolean := false;	--! test0: send double data word and check
 		
 	-----------------------------
 	
@@ -137,7 +137,7 @@ begin
 				wait until rising_edge(C); wait for tskew;
 				buf(i)	:= SO;				--! capture serial output
 				wait for (CLKDIV)*tclk;
-				assert ( MTY'STABLE(CLKDIV*tclk) and MTY = '1' ) report "  Empty flag not stable and/or not empty" severity warning;
+				assert ( MTY'STABLE(CLKDIV*tclk) and MTY = '1' ) report "  Empty flag not stable and/or active" severity warning;
 				if not ( MTY'STABLE(CLKDIV*tclk) and MTY = '1' ) then good := false; end if;
 				if ( i > 0 ) then
 					assert ( BSY'STABLE(CLKDIV*tclk) and BSY = '1' ) report "  Busy flag not stable and/or not busy" severity warning;
@@ -158,8 +158,43 @@ begin
 		-- Test0: Send single data
 		------------------------- 
 		if ( DO_ALL_TEST or do_test_1 ) then
-			Report "Test0: Send double data word";
-			
+			Report "Test1: Send double data word";
+			wait until rising_edge(C); wait for tskew;
+			wait until rising_edge(C); wait for tskew;
+			-- fill in first data word
+			DI	<=	x"47";
+			LD	<=	'1';
+			wait until rising_edge(C); wait for tskew;
+			DI	<=	(others => '0');
+			LD	<=	'0';
+			wait until ( MTY = '1' );
+			wait until rising_edge(C); wait for tskew;
+			-- second data word
+			DI	<=	x"11";
+			LD	<=	'1';
+			wait until rising_edge(C); wait for tskew;
+			DI	<=	(others => '0');
+			LD	<=	'0';
+			wait until rising_edge(C); wait for tskew;
+			-- wait for startbit
+			wait until ( SO = '0' );
+			wait for (CLKDIV/2)*tclk;
+			-- record first data word and check
+			for i in buf'high downto buf'low loop
+				wait until rising_edge(C); wait for tskew;
+				buf(i)	:= SO;				--! capture serial output
+				wait for (CLKDIV)*tclk;
+				assert ( MTY'STABLE(CLKDIV*tclk) and MTY = '0' ) report "  Empty flag not stable and/or not empty" severity warning;
+				if not ( MTY'STABLE(CLKDIV*tclk) and MTY = '0' ) then good := false; end if;
+				assert ( BSY'STABLE(CLKDIV*tclk) and BSY = '1' ) report "  Busy flag not stable and/or not busy" severity warning;
+				if not ( BSY'STABLE(CLKDIV*tclk) and BSY = '1' ) then good := false; end if;
+			end loop;
+			assert ( buf(9) = '0' ) report "  Error: Startbit expected" severity warning;
+			if not ( buf(9) = '0' ) then good := false; end if;
+			assert ( buf(0) = '1' ) report "  Error: Stopbit expected" severity warning;
+			if not ( buf(0) = '1' ) then good := false; end if;
+			assert ( buf(8 downto 1) = x"47" ) report "  Error: Dataword expected 0x47" severity warning;
+			if not ( buf(8 downto 1) = x"47" ) then good := false; end if;			
 			
 			
 		end if;
