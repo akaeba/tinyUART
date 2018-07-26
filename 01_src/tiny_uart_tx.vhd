@@ -25,7 +25,7 @@ library IEEE;
 
 
 --------------------------------------------------------------------------
--- Parity calculation
+-- TX path
 entity tiny_uart_tx is
 generic (
             CLKDIV  : positive              := 20;      --! builds baud rate
