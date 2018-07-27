@@ -66,9 +66,9 @@ architecture rtl of tiny_uart_tx is
 
     -----------------------------
     -- Constants
-        constant C_BAUD_CNTR_W  : integer                                   := integer(ceil(log2(real(CLKDIV+1))));                             --! counter bit width
-        constant C_BIT_CNTR_W   : integer                                   := integer(ceil(log2(real(DWIDTH+STOPBIT+1+1+1))));                 --! calc counter width; +1 for start, +1 for parity, +1 to avoid overflows
-        constant C_SFR_W        : integer                                   := integer(DWIDTH+1+1);                                             --! +1 for start, +1 for parity
+        constant C_BAUD_CNTR_W  : integer   := integer(ceil(log2(real(CLKDIV+1))));             --! counter bit width
+        constant C_BIT_CNTR_W   : integer   := integer(ceil(log2(real(DWIDTH+STOPBIT+1+1+1)))); --! calc counter width; +1 for start, +1 for parity, +1 to avoid overflows
+        constant C_SFR_W        : integer   := integer(DWIDTH+1+1);                             --! +1 for start, +1 for parity
     -----------------------------
 
 
