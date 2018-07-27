@@ -75,7 +75,8 @@ architecture rtl of tiny_uart_tx is
     -----------------------------
     -- Signals
         signal baud_cntr_cnt    : std_logic_vector(C_BAUD_CNTR_W-1 downto 0);   --! baud rate counter count
-        signal baud_cntr_ovl    : std_logic;                                    --! reload baud rate counter
+        signal baud_cntr_ovl    : std_logic;                                    --! reload baud rate overflows
+        signal baud_cntr_ld     : std_logic;                                    --! reload baud rate counter
         signal baud_cntr_ena    : std_logic;                                    --! enable counter
         signal bit_cntr_cnt     : std_logic_vector(C_BIT_CNTR_W-1 downto 0);    --! bit counter count
         signal bit_cntr_pst     : std_logic_vector(C_BIT_CNTR_W-1 downto 0);    --! bit counter preset
@@ -86,6 +87,7 @@ architecture rtl of tiny_uart_tx is
         signal ld_tx            : std_logic;                                    --! load for next tranmission cycle
         signal dat_tx           : std_logic_vector(C_SFR_W-1 downto 0);         --! sfr load
         signal parity           : std_logic;                                    --! parity of input data
+        signal idle             : std_logic;                                    --! nothing reequested
     -----------------------------
 
 begin
@@ -99,15 +101,16 @@ begin
         port map    (
                         R   => R,               --! asnychon reset
                         C   => C,               --! clock
-                        LD  => baud_cntr_ovl,   --! load value
+                        LD  => baud_cntr_ld,    --! load value
                         EN  => baud_cntr_ena,   --! enable counting
                         UP  => '1',             --! count direction;    '1' : upcounting; '0' downcounting
                         SET => (others => '0'), --! load value
                         CNT => baud_cntr_cnt    --! actual count value
                     );
         -- help logic
-        baud_cntr_ovl <= '1' when ( to_01(unsigned(baud_cntr_cnt)) > CLKDIV-1 ) else '0';   --! counter overflow
-        baud_cntr_ena <= '1' when ( current_state = TX_S) else '0';                         --! transmission active
+        baud_cntr_ld    <= baud_cntr_ovl or idle;                                           -- rreload counter
+        baud_cntr_ovl   <= '1' when ( to_01(unsigned(baud_cntr_cnt)) > CLKDIV-1 ) else '0'; --! counter overflow
+        baud_cntr_ena   <= '1' when ( current_state = TX_S) else '0';                       --! transmission active
     ----------------------------------------------
 
 
@@ -252,8 +255,12 @@ begin
 
     ----------------------------------------------
     -- assignements
+        -- internal
+    idle    <=  '1' when ( current_state = IDLE_S ) else '0';
+
+        -- world
     MTY <= not data_reg_new;    --! signalling empty buffer register
-    BSY <= '0' when ( current_state = IDLE_S ) else '1';
+    BSY <= not idle;            --! invert for busy
     ----------------------------------------------
 
 end architecture rtl;
