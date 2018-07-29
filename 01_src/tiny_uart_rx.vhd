@@ -84,7 +84,6 @@ architecture rtl of tiny_uart_rx is
         signal baud_cntr_ena    : std_logic;                                    --! enable counter
         signal current_state    : t_tiny_uart_rx;                               --! fsm states
         signal next_state       : t_tiny_uart_rx;                               --!
-        signal idle             : std_logic;                                    --! waiting for new
         signal sfr_rx           : std_logic_vector(C_SFR_W-1 downto 0);         --! shift register output
         signal bit_cntr_cnt     : std_logic_vector(C_BIT_CNTR_W-1 downto 0);    --! bit counter count
         signal bit_cntr_ld      : std_logic;                                    --! load bit counter
@@ -92,7 +91,7 @@ architecture rtl of tiny_uart_rx is
         signal sample_bit       : std_logic;                                    --! samples bit and decrements bit counter
         signal data_rcv         : std_logic_vector(DWIDTH-1 downto 0);          --! recieved data
         signal framing_ero      : std_logic;                                    --! framing error
-
+    -----------------------------
 
 begin
 
@@ -170,7 +169,7 @@ begin
                     );
         -- glue
         bit_cntr_ld     <= '1' when ( current_state = IDLE_S ) else '0';
-        bit_cntr_pst    <= std_logic_vector(to_unsigned(C_SFR_W, bit_cntr_pst'length));
+        bit_cntr_pst    <= std_logic_vector(to_unsigned(C_SFR_W-1, bit_cntr_pst'length));
     ----------------------------------------------
 
 
@@ -286,9 +285,10 @@ begin
 
     ----------------------------------------------
     -- assignments
-        -- internal
-    idle    <=  '1' when ( current_state = IDLE_S ) else '0';
-
+		-- busy
+    with current_state select BSY <=
+        '0' when IDLE_S,
+        '1' when others;
 
         -- recieved data
     data_rcv    <= sfr_rx(sfr_rx'left-1 downto sfr_rx'left-1-DWIDTH+1);                             --! extract data bits
