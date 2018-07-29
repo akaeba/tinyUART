@@ -25,7 +25,6 @@ set path_src "../01_src"
 #
 vcom -93 $path_src/tiny_uart_sfr.vhd
 vcom -93 $path_src/tiny_uart_cntr.vhd
-vcom -93 $path_src/tiny_uart_parity.vhd
 vcom -93 $path_src/tiny_uart_tx.vhd
 #
 

@@ -30,8 +30,6 @@ entity tiny_uart_tx is
 generic (
             CLKDIV  : positive              := 20;      --! builds baud rate
             DWIDTH  : positive              := 8;       --! data width
-            ENAPAR  : boolean               := false;   --! parity check            true : enable;  false : disable
-            EVENPAR : bit                   := '1';     --! selects parity mode;    '1' : Even Parity; '0' : Odd Parity
             STOPBIT : integer range 1 to 2  := 1        --! number of stopbit
         );
 port    (
@@ -67,8 +65,8 @@ architecture rtl of tiny_uart_tx is
     -----------------------------
     -- Constants
         constant C_BAUD_CNTR_W  : integer   := integer(ceil(log2(real(CLKDIV+1))));             --! counter bit width
-        constant C_BIT_CNTR_W   : integer   := integer(ceil(log2(real(DWIDTH+STOPBIT+1+1+1)))); --! calc counter width; +1 for start, +1 for parity, +1 to avoid overflows
-        constant C_SFR_W        : integer   := integer(DWIDTH+1+1);                             --! +1 for start, +1 for parity
+        constant C_BIT_CNTR_W   : integer   := integer(ceil(log2(real(DWIDTH+STOPBIT+1+1))));   --! calc counter width; +1 for start, +1 to avoid overflows
+        constant C_SFR_W        : integer   := integer(DWIDTH+1);                               --! +1 for start
     -----------------------------
 
 
@@ -86,7 +84,6 @@ architecture rtl of tiny_uart_tx is
         signal next_state       : t_tiny_uart_tx;                               --!
         signal ld_tx            : std_logic;                                    --! load for next tranmission cycle
         signal dat_tx           : std_logic_vector(C_SFR_W-1 downto 0);         --! sfr load
-        signal parity           : std_logic;                                    --! parity of input data
         signal idle             : std_logic;                                    --! nothing reequested
     -----------------------------
 
@@ -132,9 +129,8 @@ begin
         -- bit counter preset
         --   -1: counter counts downto 0
         --   +1: startbit
-        --   ENAPAR = true: +1: parity bit
         --
-        bit_cntr_pst <= std_logic_vector(to_unsigned(DWIDTH+STOPBIT+1+1-1, bit_cntr_pst'length))  when ( ENAPAR = true ) else std_logic_vector(to_unsigned(DWIDTH+STOPBIT+1-1, bit_cntr_pst'length));
+        bit_cntr_pst <= std_logic_vector(to_unsigned(DWIDTH+STOPBIT+1-1, bit_cntr_pst'length));
     ----------------------------------------------
 
 
@@ -156,28 +152,8 @@ begin
                         Q   => open             --! parallel data output
                     );
         -- glue logic
-        dat_tx  <=  '0' & data_reg & parity;                    --! build data vector to load
+        dat_tx  <=  '0' & data_reg;                             --! build data vector to load
         ld_tx   <=  '1' when ( current_state = LD_S ) else '0'; --! load bit counter and sfr
-    ----------------------------------------------
-
-
-    ----------------------------------------------
-    -- parity caclculation
-    g_with_parity : if ( ENAPAR = true ) generate
-        i_parity : entity work.tiny_uart_parity
-            generic map (
-                            EVEN_PARITY => EVENPAR, --! selects parity mode;    '1' : Even Parity; '0' : Odd Parity
-                            DWIDTH      => DWIDTH   --! width of data input
-                        )
-            port map    (
-                            D => DI,        --! input data for parity calculation
-                            P => parity     --! calculated parity
-                        );
-    end generate g_with_parity;
-
-    g_wo_parity : if ( ENAPAR = false ) generate
-        parity  <=  '1';    -- stuck to idle level
-    end generate g_wo_parity;
     ----------------------------------------------
 
 

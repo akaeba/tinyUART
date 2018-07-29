@@ -43,8 +43,6 @@ architecture sim of tiny_uart_tx_tb is
         -- DUT
         constant CLKDIV     : positive              := 1000;
         constant DWIDTH     : positive              := 8;
-        constant ENAPAR     : boolean               := false;
-        constant EVENPAR    : bit                   := '0';
         constant STOPBIT    : integer range 1 to 2  := 1;
 
         -- Clock
@@ -79,8 +77,6 @@ begin
         generic map (
                         CLKDIV  => CLKDIV,
                         DWIDTH  => DWIDTH,
-                        ENAPAR  => ENAPAR,
-                        EVENPAR => EVENPAR,
                         STOPBIT => STOPBIT
                     )
         port map    (
