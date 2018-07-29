@@ -130,11 +130,11 @@ begin
             for i in buf'high downto buf'low loop
                 wait until rising_edge(C); wait for tskew;
                 SI  <= buf(i);
-                wait for CLKDIV*tclk;
+                if ( i > 0 ) then           --! last bit no wait to allow waiting on data new edge
+                    wait for CLKDIV*tclk;
+                end if;
             end loop;
-            while ( BSY = '1' ) loop    -- wait for idle
-                wait until rising_edge(C); wait for tskew;
-            end loop;
+            wait until rising_edge(DNEW);
             assert ( buf(8 downto 1) = x"55" ) report "  Error: Dataword expected 0x55" severity warning;
             if not ( buf(8 downto 1) = x"55" ) then good := false; end if;
             assert ( FRMERO = '0' ) report "  Error: Framing" severity warning;
