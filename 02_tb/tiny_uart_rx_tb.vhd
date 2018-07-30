@@ -121,7 +121,7 @@ begin
 
 
         -------------------------
-        -- Test0: Send single data
+        -- Test0: Recieve Single data word
         -------------------------
         if ( DO_ALL_TEST or do_test_0 ) then
             Report "Test0: Recieve Single data word";
@@ -135,10 +135,45 @@ begin
                 end if;
             end loop;
             wait until rising_edge(DNEW);
-            assert ( buf(8 downto 1) = x"55" ) report "  Error: Dataword expected 0x55" severity warning;
-            if not ( buf(8 downto 1) = x"55" ) then good := false; end if;
+            assert ( DO = x"55" ) report "  Error: Dataword expected 0x55" severity warning;
+            if not ( DO = x"55" ) then good := false; end if;
             assert ( FRMERO = '0' ) report "  Error: Framing" severity warning;
             if not ( FRMERO = '0' ) then good := false; end if;
+            while ( BSY = '1' ) loop    -- wait for idle
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+        end if;
+        -------------------------
+
+
+        -------------------------
+        -- Test1: Recieve multiple words
+        -------------------------
+        if ( DO_ALL_TEST or do_test_1 ) then
+            Report "Test1: Recieve multiple words";
+            wait until rising_edge(C); wait for tskew;
+            UNIFORM(seed1, seed2, rand);    --! dummy read, otherwise first rand is zero
+            for j in 0 to loop_iter-1 loop
+                UNIFORM(seed1, seed2, rand);    --! random number
+                tmp :=  std_logic_vector(to_unsigned(integer(round(rand*(2.0**tmp'length-1.0))), tmp'length));
+                buf :=  '0' & tmp & '1';  --! start, data, stop bits
+                wait until rising_edge(C); wait for tskew;
+                for i in buf'high downto buf'low loop
+                    wait until rising_edge(C); wait for tskew;
+                    SI  <= buf(i);
+                    if ( i > 0 ) then           --! last bit no wait to allow waiting on data new edge
+                        wait for CLKDIV*tclk;
+                    end if;
+                end loop;
+                wait until rising_edge(DNEW);
+                assert ( DO = tmp ) report "  Error: loop=" & integer'image(j) & "; Dataword exp. unequal is" severity warning;
+                if not ( DO = tmp ) then good := false; end if;
+                assert ( FRMERO = '0' ) report "  Error: Framing" severity warning;
+                if not ( FRMERO = '0' ) then good := false; end if;
+                while ( BSY = '1' ) loop    -- wait for idle
+                    wait until rising_edge(C); wait for tskew;
+                end loop;
+            end loop;
         end if;
         -------------------------
 
