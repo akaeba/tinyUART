@@ -219,7 +219,7 @@ begin
 
 
         -------------------------
-        -- Test2: Send double data word
+        -- Test2: Send random number data words
         -------------------------
         if ( DO_ALL_TEST or do_test_2 ) then
             Report "Test2: Send random number data words";
