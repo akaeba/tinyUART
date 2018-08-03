@@ -52,9 +52,9 @@ architecture sim of tiny_uart_rx_tb is
 
         -- Test
         constant loop_iter  : integer := 20;    --! number of test loop iteration
-        constant do_test_0  : boolean := true;  --! test0: send single data word and check
-        constant do_test_1  : boolean := true;  --! test1: send double data word and check
-        constant do_test_2  : boolean := true;  --! test2: random number test
+        constant do_test_0  : boolean := true;  --! test0: recieve single data word
+        constant do_test_1  : boolean := true;  --! test1: recieve multiple random data words
+        constant do_test_2  : boolean := true;  --! test2: provoke an framing error
     -----------------------------
 
 
@@ -178,7 +178,67 @@ begin
         -------------------------
 
 
-
+        -------------------------
+        -- Test1: Framing Error
+        -------------------------
+        if ( DO_ALL_TEST or do_test_2 ) then
+            Report "Test2: Framing Error";
+            -- buad rate to slow
+            Report "         Baud rate to fast";
+            wait until rising_edge(C); wait for tskew;
+            buf :=  '0' & x"00" & '1';  --! start, data, stop bits
+            for i in buf'high downto buf'low loop
+                wait until rising_edge(C); wait for tskew;
+                SI  <= buf(i);
+                if ( FRMERO = '1' ) then        --! exit bit send loop if error found
+                    SI  <= '1';                 --! change to lines idle level
+                    exit;
+                end if;
+                if ( i > 0 ) then               --! last bit no wait to allow waiting on data new edge
+                    wait for CLKDIV*10*tclk;    --! multiply by 10 to provoke a faster baud rate
+                end if;
+            end loop;
+            while ( BSY = '1' ) loop    -- wait for idle
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            assert ( FRMERO = '1' ) report "  Error: Framing error expected" severity warning;
+            if not ( FRMERO = '1' ) then good := false; end if;
+            -- recieve succesfull to clear error bit
+            wait until rising_edge(C); wait for tskew;
+            buf :=  '0' & x"00" & '1';  --! start, data, stop bits
+            for i in buf'high downto buf'low loop
+                wait until rising_edge(C); wait for tskew;
+                SI  <= buf(i);
+                if ( i > 0 ) then               --! last bit no wait to allow waiting on data new edge
+                    wait for CLKDIV*tclk;   --! multiply by 10 to provoke a faster baud rate
+                end if;
+            end loop;
+            while ( BSY = '1' ) loop    -- wait for idle
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- baud rate to fast
+            Report "         Baud rate to slow";
+            buf :=  '0' & x"00" & '1';  --! start, data, stop bits
+            while ( FRMERO = '0' ) loop --! run in a loop to sample '0' at stop bit position => framming error
+                for i in buf'high downto buf'low loop
+                    wait until rising_edge(C); wait for tskew;
+                    SI  <= buf(i);
+                    if ( FRMERO = '1' ) then        --! exit bit send loop if error found
+                        SI  <= '1';                 --! change to lines idle level
+                        exit;
+                    end if;
+                    if ( i > 0 ) then               --! last bit no wait to allow waiting on data new edge
+                        wait for CLKDIV/10*tclk;    --! divide by 10 to provoke a slower baud rate
+                    end if;
+                end loop;
+            end loop;
+            while ( BSY = '1' ) loop    -- wait for idle
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            assert ( FRMERO = '1' ) report "  Error: Framing error expected" severity warning;
+            if not ( FRMERO = '1' ) then good := false; end if;
+        end if;
+        -------------------------
 
 
         -------------------------
