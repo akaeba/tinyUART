@@ -35,8 +35,8 @@ generic (
         );
 port    (
             -- Clock/Reset
-            R       : in    std_logic;                          --! asnychon reset
-            C       : in    std_logic;                          --! master clock
+            R       : in    std_logic;                          --! asnychon reset, high-active
+            C       : in    std_logic;                          --! master clock, rising-edge
             -- Control
             DNEW    : out   std_logic;                          --! new data available, one clock cyle high
             BSY     : out   std_logic;                          --! shift register active
