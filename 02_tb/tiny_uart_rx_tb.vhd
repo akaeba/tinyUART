@@ -44,7 +44,6 @@ architecture sim of tiny_uart_rx_tb is
         constant CLKDIV     : positive              := 1000;
         constant DWIDTH     : positive              := 8;
         constant STOPBIT    : integer range 1 to 2  := 1;
-        constant NUMSYNC    : integer range 2 to 3  := 2;
 
         -- Clock
         constant tclk   : time  := 1 us;    --! 1MHz clock
@@ -78,8 +77,7 @@ begin
         generic map (
                         CLKDIV  => CLKDIV,
                         DWIDTH  => DWIDTH,
-                        STOPBIT => STOPBIT,
-                        NUMSYNC => NUMSYNC
+                        STOPBIT => STOPBIT
                     )
         port map    (
                         R       => R,

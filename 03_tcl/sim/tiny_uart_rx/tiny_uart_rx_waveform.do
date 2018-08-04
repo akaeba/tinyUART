@@ -12,6 +12,9 @@ add wave -noupdate -divider FSM
 add wave -noupdate /tiny_uart_rx_tb/DUT/current_state
 add wave -noupdate /tiny_uart_rx_tb/DUT/next_state
 add wave -noupdate /tiny_uart_rx_tb/DUT/sample_bit
+add wave -noupdate /tiny_uart_rx_tb/DUT/start_bit
+add wave -noupdate /tiny_uart_rx_tb/DUT/si_01
+add wave -noupdate /tiny_uart_rx_tb/DUT/si_01_clk1
 add wave -noupdate -divider Counter
 add wave -noupdate -radix unsigned /tiny_uart_rx_tb/DUT/baud_cntr_cnt
 add wave -noupdate /tiny_uart_rx_tb/DUT/baud_cntr_ovl
@@ -25,7 +28,7 @@ add wave -noupdate -radix hexadecimal /tiny_uart_rx_tb/DUT/sfr_rx
 add wave -noupdate -radix hexadecimal /tiny_uart_rx_tb/DUT/data_rcv
 add wave -noupdate /tiny_uart_rx_tb/DUT/framing_ero
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {9530500000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {9501000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 254
 configure wave -valuecolwidth 107
@@ -41,4 +44,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {56847829888 ps}
+WaveRestoreZoom {0 ps} {262500 us}

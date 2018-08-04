@@ -31,8 +31,7 @@ entity tiny_uart_rx is
 generic (
             CLKDIV  : positive              := 20;      --! builds baud rate
             DWIDTH  : positive              := 8;       --! data width
-            STOPBIT : integer range 1 to 2  := 1;       --! number of stopbit
-            NUMSYNC : integer range 2 to 3  := 2        --! number of sync stages at data input
+            STOPBIT : integer range 1 to 2  := 1        --! number of stopbit
         );
 port    (
             -- Clock/Reset
@@ -75,9 +74,9 @@ architecture rtl of tiny_uart_rx is
 
     -----------------------------
     -- Signals
-        signal si_sync          : std_logic_vector(NUMSYNC downto 0);           --! baud rate counter count, +1 for edge detection
         signal start_bit        : std_logic;                                    --! start bit detected
-        signal si_01            : std_logic;                                    --! help signal
+        signal si_01            : std_logic;                                    --! help signal, for reducing logic states to zero/one
+        signal si_01_clk1       : std_logic;                                    --! help for edge detection
         signal baud_cntr_cnt    : std_logic_vector(C_BAUD_CNTR_W-1 downto 0);   --! baud rate counter count
         signal baud_cntr_ovl    : std_logic;                                    --! baud rate counter overflows
         signal baud_cntr_ld     : std_logic;                                    --! preset counter
@@ -94,29 +93,6 @@ architecture rtl of tiny_uart_rx is
     -----------------------------
 
 begin
-
-    ----------------------------------------------
-    -- shift forward register
-    i_sync : entity work.tiny_uart_sfr
-        generic map (
-                        DWIDTH  => si_sync'length,  --! data width of shift register
-                        RST_SFR => '1'              --! reset value of shift register
-                    )
-        port map    (
-                        R   => R,               --! asnychon reset
-                        C   => C,               --! clock, rising edge
-                        LD  => '0',             --! load parallel data input in shift register
-                        EN  => '1',             --! enable shift registers forward shift
-                        SD  => si_01,           --! serial data input, idle is one
-                        SQ  => open,            --! serial data output
-                        D   => (others => '0'), --! parallel data input
-                        Q   => si_sync          --! parallel data output
-                    );
-        -- help
-        si_01       <=  to_stdulogic(to_bit(SI));                                   --! reduce 7 stage logic to zero/one, avoids warning
-        start_bit   <=  si_sync(si_sync'left) and (not (si_sync(si_sync'left-1)));  --! detect falling edge
-    ----------------------------------------------
-
 
     ----------------------------------------------
     -- baud rate generation
@@ -181,14 +157,14 @@ begin
                         RST_SFR => '0'              --! reset value of shift register
                     )
         port map    (
-                        R   => R,                       --! asnychon reset
-                        C   => C,                       --! clock, rising edge
-                        LD  => '0',                     --! load parallel data input in shift register
-                        EN  => sample_bit,              --! enable shift registers forward shift
-                        SD  => si_sync(si_sync'left),   --! serial data input, idle is one
-                        SQ  => open,                    --! serial data output
-                        D   => (others => '0'),         --! parallel data input
-                        Q   => sfr_rx                   --! parallel data output
+                        R   => R,               --! asnychon reset
+                        C   => C,               --! clock, rising edge
+                        LD  => '0',             --! load parallel data input in shift register
+                        EN  => sample_bit,      --! enable shift registers forward shift
+                        SD  => si_01_clk1,      --! serial data input, idle is one
+                        SQ  => open,            --! serial data output
+                        D   => (others => '0'), --! parallel data input
+                        Q   => sfr_rx           --! parallel data output
                     );
         -- glue logic
         sample_bit  <= baud_cntr_ovl when ( current_state = SMPL_S ) else '0';  --! capture data
@@ -204,6 +180,7 @@ begin
             FRMERO          <= '0';             --! signal framing error
             current_state   <= IDLE_S;          --! reset state
             DNEW            <= '0';             --! new data
+            si_01_clk1      <= '1';             --! delayed clock input
 
         elsif ( rising_edge(C) ) then
             -- output data
@@ -219,8 +196,9 @@ begin
                 DNEW    <= '0';
             end if;
 
-            -- FSM
+            -- DFFs
             current_state   <= next_state;  --! state update
+            si_01_clk1      <= si_01;       --! assign new value
 
         end if;
     end process p_register;
@@ -285,7 +263,7 @@ begin
 
     ----------------------------------------------
     -- assignments
-		-- busy
+        -- busy
     with current_state select BSY <=
         '0' when IDLE_S,
         '1' when others;
@@ -293,6 +271,10 @@ begin
         -- recieved data
     data_rcv    <= sfr_rx(sfr_rx'left-1 downto sfr_rx'left-1-DWIDTH+1);                             --! extract data bits
     framing_ero <= not ((not sfr_rx(sfr_rx'left)) and (and_reduce(sfr_rx(STOPBIT-1 downto 0))));    --! expects startbit zero, stopbits one, otherwise error flag
+
+        -- start bit detection & data fill-in
+    si_01       <=  to_stdulogic(to_bit(SI));   --! reduce 7 stage logic to zero/one, avoids warning
+    start_bit   <=  si_01_clk1 and (not si_01); --! detect falling edge
     ----------------------------------------------
 
 
