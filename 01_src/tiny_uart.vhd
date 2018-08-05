@@ -103,7 +103,7 @@ architecture rtl of tiny_uart is
     signal sync_debounce_q  : std_logic_vector(c_num_debounce_sync-2 downto 0); --! sync/debounce register serial output
     signal rx_bit           : std_logic;                                        --! voted rx-bit
     signal bsy_rx           : std_logic;                                        --! recieve active
-    signal rx_swp           : std_logic_vector(RX'range);                       --! help signal to swap bits
+    signal swp_rx           : std_logic_vector(RX'range);                       --! help signal to swap bits
     -----------------------------
 
 
@@ -228,10 +228,10 @@ begin
                         BSY    => bsy_rx,   --! shift register active
                         FRMERO => FRMERO,   --! framing error
                         SI     => rx_bit,   --! serial data in
-                        DO     => rx_swp    --! Parallel data output
+                        DO     => swp_rx    --! Parallel data output
                     );
         -- help
-        RX  <= swap_bits(rx_swp);   --! swap bits to meet UART
+        RX  <= swap_bits(swp_rx);   --! swap bits to meet UART
     ----------------------------------------------
 
 
