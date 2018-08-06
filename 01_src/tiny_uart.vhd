@@ -99,11 +99,10 @@ architecture rtl of tiny_uart is
     signal swp_tx           : std_logic_vector(TX'range);                       --! swap bits to meet uart spec
     signal bsy_tx           : std_logic;                                        --! transmission active
     signal sync_debounce    : std_logic_vector(c_num_debounce_sync-1 downto 0); --! sync and debounce input
-    signal sync_debounce_sq : std_logic;                                        --! sync/debounce register parallel output
-    signal sync_debounce_q  : std_logic_vector(c_num_debounce_sync-2 downto 0); --! sync/debounce register serial output
     signal rx_bit           : std_logic;                                        --! voted rx-bit
     signal bsy_rx           : std_logic;                                        --! recieve active
     signal swp_rx           : std_logic_vector(RX'range);                       --! help signal to swap bits
+    signal rx_voter         : std_logic_vector(c_num_debounce-1 downto 0);      --! help signal to relax bit selection
     -----------------------------
 
 
@@ -194,7 +193,7 @@ begin
     -- Sync & Debounce
     i_rx_sync_debounce : entity work.tiny_uart_sfr
         generic map (
-                        DWIDTH  => sync_debounce'length-1,  --! data width of shift register
+                        DWIDTH  => sync_debounce'length,    --! data width of shift register
                         RST_SFR => '1'                      --! reset value of shift register
                     )
         port map    (
@@ -203,13 +202,13 @@ begin
                         LD  => '0',                 --! load parallel data input in shift register
                         EN  => '1',                 --! enable shift registers forward shift
                         SD  => RXD,                 --! serial in
-                        SQ  => sync_debounce_sq,    --! capture highest bit
+                        SQ  => open,                --! in Qs MSB also
                         D   => (others => '1'),     --! parallel data input
-                        Q   => sync_debounce_q      --! capture rest of input
+                        Q   => sync_debounce        --! capture rest of input
                     );
         -- help
-        sync_debounce   <= sync_debounce_sq & sync_debounce_q;  --! build vector for voters input
-        rx_bit          <= major_voter(sync_debounce(sync_debounce'left downto sync_debounce'left-(c_num_debounce-1))); --! extract bits after sync stage for voter input
+        rx_voter    <= sync_debounce(sync_debounce'left downto sync_debounce'left-(c_num_debounce-1));  --! extract for voter input
+        rx_bit      <= major_voter(rx_voter);                                                           --! extract bits after sync stage for voter input
     ----------------------------------------------
 
 
