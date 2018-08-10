@@ -122,8 +122,8 @@ architecture rtl of tiny_uart is
         --
         -- major voter
     function major_voter (arg: std_logic_vector) return std_logic is
-        variable num_once   : integer range 0 to arg'length;
-        variable treshold   : integer := integer(floor(real(arg'length)/2.0));
+        constant treshold   : integer := integer(floor(real(arg'length)/2.0));
+		variable num_once   : integer range 0 to arg'length;
         variable result     : std_logic;
         variable arg_01     : unsigned(arg'range);
     begin
@@ -144,28 +144,6 @@ architecture rtl of tiny_uart is
     -----------------------------
 
 begin
-
-    ----------------------------------------------
-    -- Warning: Baudrate misssetting
-    p_chk_baudrate : process
-        constant total_bits_per_frame   : integer   := DWIDTH + STOPBIT + 1;                                                                --! +1 Startbit
-        constant ideal_bit_duration     : real      := real(CLK_HZ)/real(BAUD_BPS);                                                         --! calculate ideal divider
-        constant error_per_bit_rel      : real      := (real(c_baudrate_generator) - real(ideal_bit_duration)) / real(ideal_bit_duration);  --! calc deviation per bit
-        constant error_total_rel        : real      := real(error_per_bit_rel) * real(total_bits_per_frame);                                --! caclulate total relative error
-    begin
-        if ( abs(error_total_rel) >= 0.0 and abs(error_total_rel) <= 0.1 ) then
-            null;                                                       --! all is perfect
-        elsif ( abs(error_total_rel) > 0.1 and abs(error_total_rel) <= 0.25 ) then
-            Report "Relative bit error exceeds 10%" severity warning;   --! can work
-        elsif ( abs(error_total_rel) > 0.25 and abs(error_total_rel) <= 0.5 ) then
-            Report "Relative bit error exceeds 25%" severity error;     --! high probability that it will not work
-        else
-            Report "Relative bit error exceeds 50%" severity failure;   --! will never work
-        end if;
-        wait;
-    end process p_chk_baudrate;
-    ----------------------------------------------
-
 
     ----------------------------------------------
     -- UART Tx Path
