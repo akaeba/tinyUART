@@ -34,12 +34,12 @@ set_input_delay -clock {clk50} 5.0 [get_ports {TX[*] TXCE RXD}];
 
 # Output Delay
 #
-set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD FRMERO RX[*] RXCE TXMTY BSY}];   
+set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD FRMERO RX[*] RXCE TXMTY BSY}];
 #
 
 
 # False pathes
 #
-set_false_path -from * 					-to {tiny_uart_sfr:i_rx_sync_debounce|sfr_q[0]};	# UART is always asynchron, therefore false path
-set_false_path -from [get_ports {R}] 	-to *;												# Reset, cause at the moment no RST sync
+set_false_path -from *                  -to {tiny_uart_sfr:i_rx_sync_debounce|sfr_q[0]};    # UART is always asynchron, therefore false path
+set_false_path -from [get_ports {R}]    -to *;                                              # Reset, cause at the moment no RST sync
 #
