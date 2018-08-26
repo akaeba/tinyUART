@@ -35,8 +35,9 @@ UART core written in VHDL
 
 ## Architecture
 
-
-
+<br/>
+<center><img src=" /99_md/tiny_uart_arch.svg" height="100%" width="100%" alt="block level diagram" title="tiny uart simplified system architeture" /></center>
+<br/>
 
 
 ## References
