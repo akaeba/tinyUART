@@ -6,7 +6,7 @@
 -- @note        VHDL'93
 --
 -- @brief       UART core (toplevel)
--- @details     UART Transmitter and Reciever
+-- @details     UART Transmitter and Receiver
 --
 -- @date        2018-08-03
 -- @version     0.1
@@ -25,14 +25,14 @@
 --      BAUD_BPS:   Baudrate in BPS
 --      DEBOUNCE:   voter sample, avaoid false detection if sync stages latches accidentally the wrong value
 --
---  Miscellanous
---  ------------
+--  Miscellaneous
+--  -------------
 --      parity:     none
 --      stop bits:  1-2
 --      CLK_HZ:     > 16*BAUD_BPS
 --
---  Typical Baudrates
---  -----------------
+--  Typical Baud-rates
+--  ------------------
 --      9600, 19200, 38400, 57600, 115200, 230400
 --
 --

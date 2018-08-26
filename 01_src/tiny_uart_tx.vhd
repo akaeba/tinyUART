@@ -6,7 +6,7 @@
 -- @note        VHDL'93
 --
 -- @brief       TX
--- @details     uart transmitter with single stage buffer register
+-- @details     UART transmitter with single stage buffer register
 --
 -- @date        2018-07-18
 -- @version     0.1

@@ -6,7 +6,7 @@
 -- @note        VHDL'93
 --
 -- @brief       RX
--- @details     uart treciever with single stage buffer register
+-- @details     UART receiver with single stage buffer register
 --
 -- @date        2018-07-26
 -- @version     0.1
