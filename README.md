@@ -2,6 +2,14 @@
 UART core written in VHDL
 
 
+## Features
+
+* parameterizable data size
+* one or two stop bits
+* variable baud rate settings
+* buffer register on rx and tx
+
+
 ## Interface
 
 ### Table of generics
@@ -10,9 +18,9 @@ UART core written in VHDL
 | -------- | -------- | ------- | ---------------------------------------------------- |
 | DWIDTH   | integer  | 8       | data width                                           |
 | CLK_HZ   | positive | 50e6    | core clock frequency in Hz                           |
-| BAUD_BPS | positive | 115200  | UART tranmission speed in baud per second            |
-| STOPBIT  | integer  | 1       | number of stopbits, fracs not allowed                |
-| RXSYNC   | integer  | 2       | data input to clock synchronisation flip-flop stages |
+| BAUD_BPS | positive | 115200  | UART transmission speed in baud per second           |
+| STOPBIT  | integer  | 1       | number of stop bits, fracs not allowed               |
+| RXSYNC   | integer  | 2       | data input to clock synchronization flip-flop stages |
 | DEBOUNCE | integer  | 1       | majority voter for input debouncing; stages: 2n+1    |
 
 
@@ -24,8 +32,8 @@ UART core written in VHDL
 | C        | input     | 1b     | clock, rising-edge only used                       |
 | TXD      | output    | 1b     | serial UART output                                 |
 | RXD      | input     | 1b     | serial UART input                                  |
-| FRMERO   | output    | 1b     | framing error; start and stopbit not as expected   |
-| RX       | output    | 4b..8b | recieved data value; highest bit is MSB            |
+| FRMERO   | output    | 1b     | framing error; start and stop bit not as expected  |
+| RX       | output    | 4b..8b | received data value; highest bit is MSB            |
 | RXCE     | output    | 1b     | new data value available, one clock cycle high     |
 | TX       | input     | 4b..8b | transmit data value; highest bit is MSB            |
 | TXMTY    | output    | 1b     | tx buffer register empty; ready to write new value |
@@ -36,7 +44,7 @@ UART core written in VHDL
 ## Architecture
 
 <br/>
-<center><img src="./99_md/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny uart simplified system architeture" /></center>
+<center><img src="./99_md/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny uart simplified system architecture" /></center>
 <br/>
 
 
