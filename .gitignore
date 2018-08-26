@@ -15,18 +15,30 @@
 
 
 
-#
 # Modelsim directory
 # Exclude all subdirectories, f.e. compiled hdl code
-#---------------------------------------------------
+#
 04_sim/*/
 #
 
 
-#
 # Exceptions
-#-----------
+#
 !.gitignore.
 !.gitconfig.
 **/!.gitkeep.
+#
+
+
+# Quartus
+#
+10_fpga/db/
+10_fpga/incremental_db/
+10_fpga/simulation/
+10_fpga/timing/
+10_fpga/testbench/
+10_fpga/*_sim/
+10_fpga/incremental_db/
+10_fpga/db/
+10_fpga/output_files/
 #
