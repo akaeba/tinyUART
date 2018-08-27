@@ -1,0 +1,26 @@
+{signal: 
+ [
+  ['Misc',
+    {name: 'C',      wave: 'P.........|....|...|...|.'},
+    {name: 'R',      wave: '1.0.......|....|...|...|.'},
+  ],
+  {},
+  ['UART',
+    {name: 'TXD',    wave: '1......0..|.1..|.0.|.1.|.', node: '.......a.......b.c.....d'}, 
+  ],
+  {},
+  ['Parallel',
+    {name: 'TX',     wave: 'x...=x..=x|....|...|...|.', data: ['dat0', 'dat1']},
+    {name: 'TXCE',   wave: '0...10..10|....|...|...|.'},
+    {name: 'TXMTY',  wave: '1....0.1.0|...1|...|...|.'},
+    {name: 'BSY',    wave: '0....1....|....|...|...|.', },
+  ],
+ ],
+edge: [
+   'b<->a dat0', 'c<->d dat1',
+],
+foot:{
+ text:'UART transmit timing',
+ tock:9
+},
+}
