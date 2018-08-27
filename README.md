@@ -53,9 +53,7 @@ UART core written in VHDL
 
 ### TX
 
-<br/>
 <center><img src="./99_md/tiny_uart_if_timing_tx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
-<br/>
 
 
 ### RX
