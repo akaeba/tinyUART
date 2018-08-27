@@ -21,6 +21,6 @@ edge: [
 ],
 foot:{
  text:'UART transmit timing',
- tock:9
+ tock: 1
 },
 }
