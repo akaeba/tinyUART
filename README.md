@@ -4,10 +4,11 @@ UART core written in VHDL
 
 ## Features
 
+* independent RX and TX path
+* buffer register on RX and TX
 * parameterizable data size
 * one or two stop bits
 * variable baud rate settings
-* buffer register on rx and tx
 
 
 ## Interface
@@ -44,8 +45,31 @@ UART core written in VHDL
 ## Architecture
 
 <br/>
-<center><img src="./99_md/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny uart simplified system architecture" /></center>
+<center><img src="./99_md/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny UART simplified system architecture" /></center>
 <br/>
+
+
+## Interface timing
+
+### TX
+
+<br/>
+<center><img src="./99_md/tiny_uart_if_timing_tx.svg" height="75%" width="75%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
+<br/>
+
+
+### RX
+
+
+## Used Tools
+
+| Task            | Tool |
+| --------------- | ---- |
+| VHDL entry      |      |
+| VHDL simulation |      |
+| FPGA synthesis  |      |
+| block diagram   |      |
+| timing diagram  |      |
 
 
 ## References
