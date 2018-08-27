@@ -292,7 +292,7 @@
 			<title>Tabelle.125</title>
 			<path d="M3.91 209.89 L4.27 209.89 L38.72 209.89" class="st21"/>
 		</g>
-		<g id="shape127-99" v:mID="127" v:groupContext="shape" transform="translate(200.501,294.689) rotate(180)">
+		<g id="shape127-99" v:mID="127" v:groupContext="shape" transform="translate(200.599,294.689) rotate(179.973)">
 			<title>Tabelle.127</title>
 			<path d="M0 209.89 L34.45 209.89" class="st12"/>
 		</g>
@@ -1656,5 +1656,61 @@
 			<v:textRect cx="11.9055" cy="205.68" width="23.82" height="8.41152"/>
 			<rect x="0" y="201.474" width="23.811" height="8.41152" class="st32"/>
 			<text x="0" y="208.08" class="st3" v:langID="1031"><v:paragraph/><v:tabList/>TXMTY</text>		</g>
+		<g id="shape539-829" v:mID="539" v:groupContext="shape" transform="translate(124.441,-40.9606)">
+			<title>Tabelle.539</title>
+			<desc>EN</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect cx="2.26772" cy="207.76" width="4.54" height="4.25197"/>
+			<rect x="0" y="205.634" width="4.53543" height="4.25197" class="st32"/>
+			<text x="0" y="208.96" class="st10" v:langID="1031"><v:paragraph v:horizAlign="2"/><v:tabList/>EN</text>		</g>
+		<g id="shape540-832" v:mID="540" v:groupContext="shape" transform="translate(124.441,-61.7953)">
+			<title>Tabelle.540</title>
+			<desc>EN</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect cx="2.26772" cy="207.76" width="4.54" height="4.25197"/>
+			<rect x="0" y="205.634" width="4.53543" height="4.25197" class="st32"/>
+			<text x="0" y="208.96" class="st10" v:langID="1031"><v:paragraph v:horizAlign="2"/><v:tabList/>EN</text>		</g>
+		<g id="shape541-835" v:mID="541" v:groupContext="shape" transform="translate(124.113,376.841) rotate(179.935)">
+			<title>Tabelle.541</title>
+			<path d="M3.03 209.89 L3.39 209.89 L9.64 209.89" class="st15"/>
+		</g>
+		<g id="shape542-840" v:mID="542" v:groupContext="shape" transform="translate(114.236,-42.2362)">
+			<title>Tabelle.542</title>
+			<desc>FSM</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect cx="2.83465" cy="207.76" width="5.67" height="4.25197"/>
+			<rect x="0" y="205.634" width="5.66929" height="4.25197" class="st32"/>
+			<text x="0" y="208.66" class="st23" v:langID="1031"><v:paragraph/><v:tabList/>FSM</text>		</g>
+		<g id="shape543-843" v:mID="543" v:groupContext="shape" transform="translate(124.113,356.007) rotate(179.935)">
+			<title>Tabelle.543</title>
+			<path d="M3.03 209.89 L3.39 209.89 L9.64 209.89" class="st15"/>
+		</g>
+		<g id="shape544-848" v:mID="544" v:groupContext="shape" transform="translate(114.236,-63.0709)">
+			<title>Tabelle.544</title>
+			<desc>FSM</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect cx="2.83465" cy="207.76" width="5.67" height="4.25197"/>
+			<rect x="0" y="205.634" width="5.66929" height="4.25197" class="st32"/>
+			<text x="0" y="208.66" class="st23" v:langID="1031"><v:paragraph/><v:tabList/>FSM</text>		</g>
+		<g id="shape545-851" v:mID="545" v:groupContext="shape" transform="translate(157.039,-146.835)">
+			<title>Tabelle.545</title>
+			<desc>EN</desc>
+			<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
+			<v:textRect cx="2.26772" cy="207.76" width="4.54" height="4.25197"/>
+			<rect x="0" y="205.634" width="4.53543" height="4.25197" class="st32"/>
+			<text x="0" y="208.96" class="st10" v:langID="1031"><v:paragraph v:horizAlign="2"/><v:tabList/>EN</text>		</g>
+		<g id="shape546-854" v:mID="546" v:groupContext="shape" v:layerMember="2" transform="translate(154.693,-125.065)">
+			<title>Dynamischer Verbinder.546</title>
+			<path d="M10.12 209.89 L10.48 209.89 L12.55 209.89 L12.55 185.91 L10.48 185.91" class="st31"/>
+		</g>
+		<g id="shape547-861" v:mID="547" v:groupContext="shape" v:layerMember="0" transform="translate(166.394,-124.157)">
+			<title>Negativer Logikpunkt.547</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+				<v:ud v:nameU="visDescription"
+						v:val="VT4(Öffnet die Shape-Gruppe und fügt diesen Punkt ein, wo eine negative Logik erforderlich ist.)"/>
+			</v:userDefs>
+			<path d="M0 209.04 a0.850394 0.850394 0 0 1 1.70079 0 a0.850394 0.850394 0 1 1 -1.70079 0 Z" class="st30"/>
+		</g>
 	</g>
 </svg>
