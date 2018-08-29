@@ -1,0 +1,26 @@
+{signal: 
+ [
+  ['Misc',
+    {name: 'C',       wave: 'P....|.|...|..|..|.|..|..|...'},
+    {name: 'R',       wave: '1.0..|.|...|..|..|.|..|..|...'},
+  ],
+  {},
+  ['UART',
+    {name: 'RXD',     wave: '1..0.|.|..1|..|0.|.|..|..|1..', node: 'a..b..c....d..ef..h...i..jk..l'}, 
+  ],
+  {},
+  ['Parallel',
+    {name: 'RX',      wave: 'x....|.|....=.|...|...|=.|...', data: ['dat0', 'dat1']},
+    {name: 'RXCE',    wave: '0....|.|....10|...|...|10|...'},
+    {name: 'FRMERO',  wave: '0....|.|......|...|...|1.|...'},
+    {name: 'BSY',     wave: '0...1|.|......|...|...|.0|...'},
+  ],
+ ],
+edge: [
+   'a<->b idle', 'b<->c startbit', 'c<->d dat0', 'd<->e stopbit', 'f<->h startbit', 'h<->i dat1', 'i<->j stopbit', 'k<->l idle',
+],
+foot:{
+ text:'UART recieve timing',
+ tock: 1
+},
+}
