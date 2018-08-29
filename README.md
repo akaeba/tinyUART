@@ -58,6 +58,8 @@ UART core written in VHDL
 
 ### RX
 
+<center><img src="./99_md/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
+
 
 ## Used Tools
 
