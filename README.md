@@ -63,13 +63,13 @@ UART core written in VHDL
 
 ## Used Tools
 
-| Task            | Tool |
-| --------------- | ---- |
-| VHDL entry      |      |
-| VHDL simulation |      |
-| FPGA synthesis  |      |
-| block diagram   |      |
-| timing diagram  |      |
+| Task            | Tool                                                                                     |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| VHDL entry      | [Notepad++](https://notepad-plus-plus.org)                                               |
+| VHDL simulation | [ModelSim-Intel FPGA Edition](http://fpgasoftware.intel.com/?product=modelsim_ae#tabs-2) |
+| FPGA synthesis  | [Quartus Prime Lite Edition (Free)](http://fpgasoftware.intel.com/?edition=lite)         |
+| block diagram   | MS Visio 2013                                                                            |
+| timing diagram  | [WaveDrom](https://github.com/wavedrom/wavedrom.github.io/releases)                      |
 
 
 ## References
