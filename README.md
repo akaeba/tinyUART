@@ -1,3 +1,16 @@
+- [tinyUART](#tinyuart)
+  * [Features](#features)
+  * [Interface](#interface)
+    + [Table of generics](#table-of-generics)
+    + [Table of ports](#table-of-ports)
+  * [Architecture](#architecture)
+  * [Interface timing](#interface-timing)
+    + [TX](#tx)
+    + [RX](#rx)
+  * [FPGA resource allocation](#fpga-resource-allocation)
+  * [Used Tools](#used-tools)
+  * [References](#references)
+
 # tinyUART
 UART core written in VHDL
 
