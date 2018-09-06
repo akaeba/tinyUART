@@ -61,6 +61,13 @@ UART core written in VHDL
 <center><img src="./99_md/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
 
 
+## FPGA resource allocation
+
+| Entity    | Logic Elements | Registers | BRAM | Fmax   |
+| --------- | -------------- | --------- | ---- | ------ |
+| tiny_uart | 104            | 77        | 0    | 324MHz |
+
+
 ## Used Tools
 
 | Task            | Tool                                                                                     |
