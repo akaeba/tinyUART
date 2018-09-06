@@ -1,3 +1,5 @@
+# Table of Contents
+
 - [tinyUART](#tinyuart)
   * [Features](#features)
   * [Interface](#interface)
@@ -11,6 +13,7 @@
   * [Used Tools](#used-tools)
   * [References](#references)
 
+  
 # tinyUART
 UART core written in VHDL
 
