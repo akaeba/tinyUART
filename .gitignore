@@ -18,7 +18,7 @@
 # Modelsim directory
 # Exclude all subdirectories, f.e. compiled hdl code
 #
-04_sim/*/
+04_sim/*
 #
 
 
