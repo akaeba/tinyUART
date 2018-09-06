@@ -56,7 +56,7 @@ architecture sim of tiny_uart_tb is
         constant loop_iter  : integer := 20;    --! number of test loop iteration
         constant do_test_0  : boolean := true;  --! test0: check debouncing logic
         constant do_test_1  : boolean := true;  --! test1: check RX Path
-        constant do_test_2  : boolean := true;  --! test2:
+        constant do_test_2  : boolean := true;  --! test2: check TX Path
     -----------------------------
 
 
@@ -154,12 +154,13 @@ begin
 
 
         -------------------------
-        -- Test0: Check RX Path
+        -- Test1: Check RX Path
         -------------------------
         if ( DO_ALL_TEST or do_test_1 ) then
             Report "Test1: Check RX-Path";
             wait until rising_edge(C); wait for tskew;
-            UNIFORM(seed1, seed2, rand);    --! dummy read, otherwise first rand is zero
+            seed1 := abs(now / 1.0 ps);		--! get RNG offset from simulation time
+			UNIFORM(seed1, seed2, rand);    --! dummy read, otherwise first rand is zero
             for j in 0 to loop_iter-1 loop
                 UNIFORM(seed1, seed2, rand);    --! random number
                 tmp :=  std_logic_vector(to_unsigned(integer(round(rand*(2.0**tmp'length-1.0))), tmp'length));
@@ -169,7 +170,7 @@ begin
                     RXD  <= buf(i);
                     wait for integer(round(1.0/real(BAUD_BPS)*1.0e12))*1 ps;
                 end loop;
-                assert ( RX = tmp ) report "  Error: loop=" & integer'image(j) & "; Dataword exp. unequal is" severity warning;
+                assert ( RX = tmp ) report "  Error: loop=" & integer'image(j) & "; isVal and expVal are unequal" severity warning;
                 if not ( RX = tmp ) then good := false; end if;
                 assert ( FRMERO = '0' ) report "  Error: Framing" severity warning;
                 if not ( FRMERO = '0' ) then good := false; end if;
@@ -178,10 +179,37 @@ begin
         -------------------------
 
 
-
-
-
-
+        -------------------------
+        -- Test1: Check TX Path
+        -------------------------
+        if ( DO_ALL_TEST or do_test_2 ) then
+            Report "Test2: Check TX-Path";
+            wait until rising_edge(C); wait for tskew;
+            seed1 := abs(now / 1.0 ps);		--! get RNG offset from simulation time	
+			UNIFORM(seed1, seed2, rand);    --! dummy read, otherwise first rand is zero
+			for j in 0 to loop_iter-1 loop
+				UNIFORM(seed1, seed2, rand);    --! random number
+				tmp 	:=  std_logic_vector(to_unsigned(integer(round(rand*(2.0**tmp'length-1.0))), tmp'length));
+				TX		<=	tmp;
+				TXCE	<=	'1';
+				wait until rising_edge(C); wait for tskew;
+				TX		<=	(others => 'X');
+				TXCE	<=	'0';
+				wait until falling_edge(TXD);
+				for i in buf'low to buf'high loop
+					wait for integer(round(1.0/(2.0*real(BAUD_BPS))*1.0e12))*1 ps;	--! wait half bit clock, to sample in the middle
+					buf(i)	:= TXD;													--! capture
+					wait for integer(round(1.0/(2.0*real(BAUD_BPS))*1.0e12))*1 ps;	--! wait half bit clock
+				end loop;
+				assert ( buf(buf'high-1 downto buf'low+1) = tmp ) report "  Error: loop=" & integer'image(j) & "; isVal and expVal are unequal" severity warning;
+				if not ( buf(buf'high-1 downto buf'low+1) = tmp ) then good := false; end if;
+				assert ( buf(buf'high) = '1' ) report "  Error: loop=" & integer'image(j) & "; Stop bit" severity warning;
+				if not ( buf(buf'high) = '1' ) then good := false; end if;
+				assert ( buf(buf'low) = '0' ) report "  Error: loop=" & integer'image(j) & "; Start bit" severity warning;
+				if not ( buf(buf'low) = '0' ) then good := false; end if;
+			end loop;
+		end if;
+		-------------------------
 
 
         -------------------------
