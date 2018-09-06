@@ -21,4 +21,4 @@ vsim -novopt -gDO_ALL_TEST=true -t 1ps work.tiny_uart_tb
 do "../03_tcl/sim/tiny_uart/tiny_uart_waveform.do"
 
 # sim until finish
-run 50 ms
+run 3.5 ms
