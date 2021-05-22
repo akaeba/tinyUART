@@ -66,7 +66,7 @@
 ## Architecture
 
 <br/>
-<center><img src="./99_md/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny UART simplified system architecture" /></center>
+<center><img src="./doc/readme/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny UART simplified system architecture" /></center>
 <br/>
 
 
@@ -74,12 +74,12 @@
 
 ### TX
 
-<center><img src="./99_md/tiny_uart_if_timing_tx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_tx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
 
 
 ### RX
 
-<center><img src="./99_md/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
 
 
 ## FPGA resource allocation
