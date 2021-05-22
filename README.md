@@ -1,3 +1,6 @@
+# tinyUART
+[UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
+
 - [tinyUART](#tinyuart)
   * [Features](#features)
   * [Interface](#interface)
@@ -10,10 +13,6 @@
   * [FPGA resource allocation](#fpga-resource-allocation)
   * [Used Tools](#used-tools)
   * [References](#references)
-
-
-# tinyUART
-UART core written in VHDL
 
 
 ## Releases
