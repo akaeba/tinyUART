@@ -1,5 +1,5 @@
 #************************************************************************
-# License		: LGPLv3
+# License		: BSDv3
 #
 # Author		: Andreas Kaeberlein
 # Email			: andreas.kaeberlein@web.de	
@@ -10,16 +10,9 @@
 #
 # Sources		: https://git-scm.com/docs/gitignore
 #
-# on			: 2017-02-23
+# on			: 2021-01-23
 #************************************************************************
 
-
-
-# Modelsim directory
-# Exclude all subdirectories, f.e. compiled hdl code
-#
-04_sim/*
-#
 
 
 # Exceptions
@@ -30,15 +23,26 @@
 #
 
 
+
+# Modelsim directory
+# Exclude all subdirectories, f.e. compiled hdl code
+#
+sim/**/*
+!sim/doSim.sh
+log/**/*
+#
+
+
+
 # Quartus
 #
-10_fpga/db/
-10_fpga/incremental_db/
-10_fpga/simulation/
-10_fpga/timing/
-10_fpga/testbench/
-10_fpga/*_sim/
-10_fpga/incremental_db/
-10_fpga/db/
-10_fpga/output_files/
+fpga/db/
+fpga/incremental_db/
+fpga/simulation/
+fpga/timing/
+fpga/testbench/
+fpga/*_sim/
+fpga/incremental_db/
+fpga/db/
+fpga/output_files/
 #

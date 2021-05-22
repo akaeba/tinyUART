@@ -1,0 +1,35 @@
+#************************************************************************
+# License		: BSDv3
+#
+# Author		: Andreas Kaeberlein
+# Email			: andreas.kaeberlein@web.de	
+#
+# File			: .gitattributes.
+#
+# Description	: file handle info
+#
+# Sources		:
+#
+# on			: 2021-03-08
+#************************************************************************
+
+
+# Ensure Office won't be messed up
+#
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.vsdx binary
+*.doc binary
+*.xls binary
+*.ppt binary
+*.vsd binary
+*.pdf binary
+#
+
+
+# Shell scripts with LF-EOL
+#   https://docs.github.com/en/github/using-git/configuring-git-to-handle-line-endings
+#
+*.sh text eol=lf
+#
