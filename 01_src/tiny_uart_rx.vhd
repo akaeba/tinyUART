@@ -54,7 +54,7 @@ end entity tiny_uart_rx;
 architecture rtl of tiny_uart_rx is
 
     -----------------------------
-    -- Typs
+    -- Types
         type t_tiny_uart_rx is  (
                                     IDLE_S, --! IDLE state
                                     SMPL_S, --! databit middle

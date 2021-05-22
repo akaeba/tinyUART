@@ -51,8 +51,8 @@ architecture sim of tiny_uart_rx_tb is
 
         -- Test
         constant loop_iter  : integer := 20;    --! number of test loop iteration
-        constant do_test_0  : boolean := true;  --! test0: recieve single data word
-        constant do_test_1  : boolean := true;  --! test1: recieve multiple random data words
+        constant do_test_0  : boolean := true;  --! test0: receive single data word
+        constant do_test_1  : boolean := true;  --! test1: receive multiple random data words
         constant do_test_2  : boolean := true;  --! test2: provoke an framing error
     -----------------------------
 
@@ -92,7 +92,7 @@ begin
 
 
     ----------------------------------------------
-    -- registers
+    -- stimuli
     p_stimuli_process : process
         -- tb help variables
             variable good   : boolean                       := true;
@@ -119,10 +119,10 @@ begin
 
 
         -------------------------
-        -- Test0: Recieve Single data word
+        -- Test0: Receive Single data word
         -------------------------
         if ( DO_ALL_TEST or do_test_0 ) then
-            Report "Test0: Recieve Single data word";
+            Report "Test0: Receive Single data word";
             buf :=  '0' & x"55" & '1';  --! start, data, stop bits
             wait until rising_edge(C); wait for tskew;
             for i in buf'high downto buf'low loop
@@ -145,10 +145,10 @@ begin
 
 
         -------------------------
-        -- Test1: Recieve multiple words
+        -- Test1: Receive multiple words
         -------------------------
         if ( DO_ALL_TEST or do_test_1 ) then
-            Report "Test1: Recieve multiple words";
+            Report "Test1: Receive multiple words";
             wait until rising_edge(C); wait for tskew;
             UNIFORM(seed1, seed2, rand);    --! dummy read, otherwise first rand is zero
             for j in 0 to loop_iter-1 loop
@@ -181,7 +181,7 @@ begin
         -------------------------
         if ( DO_ALL_TEST or do_test_2 ) then
             Report "Test2: Framing Error";
-            -- buad rate to slow
+            -- baud rate to slow
             Report "         Baud rate to fast";
             wait until rising_edge(C); wait for tskew;
             buf :=  '0' & x"00" & '1';  --! start, data, stop bits
@@ -201,7 +201,7 @@ begin
             end loop;
             assert ( FRMERO = '1' ) report "  Error: Framing error expected" severity warning;
             if not ( FRMERO = '1' ) then good := false; end if;
-            -- recieve succesfull to clear error bit
+            -- receive successful to clear error bit
             wait until rising_edge(C); wait for tskew;
             buf :=  '0' & x"00" & '1';  --! start, data, stop bits
             for i in buf'high downto buf'low loop
@@ -244,7 +244,7 @@ begin
         -------------------------
             Report "End TB...";     -- sim finished
             if (good) then
-                Report "Test SUCCESSFULL";
+                Report "Test SUCCESSFUL";
             else
                 Report "Test FAILED" severity error;
             end if;

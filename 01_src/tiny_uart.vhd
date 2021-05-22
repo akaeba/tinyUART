@@ -22,8 +22,8 @@
 --  -------------------------------------
 --      DWIDTH:     number of data bits
 --      CLK_HZ:     clock frequency in Hz
---      BAUD_BPS:   Baudrate in BPS
---      DEBOUNCE:   voter sample, avaoid false detection if sync stages latches accidentally the wrong value
+--      BAUD_BPS:   Baud rate in BPS
+--      DEBOUNCE:   voter sample, avoid false detection if sync stages latches accidentally the wrong value
 --
 --  Miscellaneous
 --  -------------
@@ -64,11 +64,11 @@ generic (
         );
 port    (
             -- Clock/Reset
-            R       : in    std_logic;          --! asnychon reset
+            R       : in    std_logic;          --! asynchrony reset
             C       : in    std_logic;          --! clock, rising edge
             -- serial UART Interface
             TXD     : out   std_logic;          --! transmit data;  LSB first
-            RXD     : in    std_logic;          --! recieve data;   LSB first
+            RXD     : in    std_logic;          --! receive data;   LSB first
             -- Parallel Interface
             FRMERO  : out   std_logic;                              --! Framing error
             RX      : out   std_logic_vector(DWIDTH-1 downto 0);    --! recieved data
