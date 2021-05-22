@@ -1,5 +1,3 @@
-# Table of Contents
-
 - [tinyUART](#tinyuart)
   * [Features](#features)
   * [Interface](#interface)
@@ -13,9 +11,17 @@
   * [Used Tools](#used-tools)
   * [References](#references)
 
-  
+
 # tinyUART
 UART core written in VHDL
+
+
+## Releases
+
+| Version                                                  | Date       | Source                                                                                                 | Change log                                                                               |
+| -------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| latest                                                   |            | <a id="raw-url" href="https://github.com/akaeba/tinyUART/archive/refs/heads/master.zip">latest.zip</a> |                                                                                          |
+| [v0.1.0](https://github.com/akaeba/tinyUART/tree/v0.1.0) | 2018-09-06 | <a id="raw-url" href="https://github.com/akaeba/tinyUART/archive/refs/tags/v0.1.0.zip">v0.1.0.zip</a>  | initial draft                                                                            |
 
 
 ## Features
@@ -24,7 +30,7 @@ UART core written in VHDL
 * buffer register on RX and TX
 * parameterizable data size
 * one or two stop bits
-* variable baud rate settings
+* variable baud rate at compile time
 
 
 ## Interface
