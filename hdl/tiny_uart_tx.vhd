@@ -1,15 +1,20 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart_tx.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       TX
--- @details     UART transmitter with single stage buffer register
+-- @note:           VHDL'93
+-- @file:           tiny_uart_tx.vhd
+-- @date:           2018-07-18
 --
--- @date        2018-07-18
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          TX path
+--
+--                  UART transmitter with single stage buffer register
 --************************************************************************
 
 

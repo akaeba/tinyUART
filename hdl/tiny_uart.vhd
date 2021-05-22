@@ -1,15 +1,20 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       UART core (toplevel)
--- @details     UART Transmitter and Receiver
+-- @note:           VHDL'93
+-- @file:           tiny_uart_cntr.vhd
+-- @date:           2018-08-03
 --
--- @date        2018-08-03
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          UART core (toplevel)
+--
+--                  UART Transmitter and Receiver
 --************************************************************************
 
 
@@ -123,7 +128,7 @@ architecture rtl of tiny_uart is
         -- major voter
     function major_voter (arg: std_logic_vector) return std_logic is
         constant treshold   : integer := integer(floor(real(arg'length)/2.0));
-		variable num_once   : integer range 0 to arg'length;
+        variable num_once   : integer range 0 to arg'length;
         variable result     : std_logic;
         variable arg_01     : unsigned(arg'range);
     begin

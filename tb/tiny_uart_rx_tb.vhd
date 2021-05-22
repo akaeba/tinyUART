@@ -1,15 +1,19 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart_rx_tb.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       testbench
--- @details
+-- @note:           VHDL'93
+-- @file:           tiny_uart_rx_tb.vhd
+-- @date:           2018-07-29
 --
--- @date        2018-07-29
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          testbench
+--
 --************************************************************************
 
 

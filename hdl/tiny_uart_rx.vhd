@@ -1,15 +1,20 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart_rx.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       RX
--- @details     UART receiver with single stage buffer register
+-- @note:           VHDL'93
+-- @file:           tiny_uart_rx.vhd
+-- @date:           2018-07-26
 --
--- @date        2018-07-26
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          RX path
+--
+--                  UART receiver with single stage buffer register
 --************************************************************************
 
 

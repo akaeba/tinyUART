@@ -1,15 +1,20 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart_cntr.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       Counter
--- @details     synchronous counter, unsigned bit encoding
+-- @note:           VHDL'93
+-- @file:           tiny_uart_cntr.vhd
+-- @date:           2018-07-15
 --
--- @date        2018-07-15
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          Counter
+--
+--                  synchronous counter, unsigned bit encoding
 --************************************************************************
 
 

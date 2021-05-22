@@ -1,15 +1,20 @@
 --************************************************************************
--- @copyright   LGPLv3
--- @author      akae
+-- @author:         Andreas Kaeberlein
+-- @copyright:      Copyright 2021
+-- @credits:        AKAE
 --
--- @file        tiny_uart_sfr.vhd
--- @note        VHDL'93
+-- @license:        BSDv3
+-- @maintainer:     Andreas Kaeberlein
+-- @email:          andreas.kaeberlein@web.de
 --
--- @brief       Shift Forward Register
--- @details     Implements common used block of a shift forward register
+-- @note:           VHDL'93
+-- @file:           tiny_uart_sfr.vhd
+-- @date:           2018-07-15
 --
--- @date        2018-07-15
--- @version     0.1
+-- @see:            https://github.com/akaeba/tinyUART
+-- @brief:          SFR
+--
+--                  Shift forward register
 --************************************************************************
 
 
