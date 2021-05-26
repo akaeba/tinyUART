@@ -38,7 +38,7 @@ entity tiny_uart_inp_filter is
 generic (
             SYNC_STAGES     : integer range 0 to 3  := 2;       --! synchronizer stages;                                                                        0: not implemented
             VOTER_STAGES    : natural range 0 to 11 := 3;       --! number of ff stages for voter; if all '1' out is '1', if all '0' out '0', otherwise hold;   0: not implemented
-            O_RST           : bit                   := '1';     --! output in reset
+            OUTP_RST        : bit                   := '1';     --! output in reset
             RST_ACTIVE      : bit                   := '1'      --! Reset active level
         );
 port    (
@@ -80,7 +80,7 @@ begin
             p_sync_ff : process( R, C )
             begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
-                    sync_ffs <= (others => to_stdulogic(O_RST));
+                    sync_ffs <= (others => to_stdulogic(OUTP_RST));
                 elsif ( rising_edge(C) ) then
                     sync_ffs <= sync_ffs(sync_ffs'left-1 downto sync_ffs'right) & INP;
                 end if;
@@ -111,7 +111,7 @@ begin
             p_voter_ff : process( R, C )
             begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
-                    voter_ffs <= (others => to_stdulogic(O_RST));
+                    voter_ffs <= (others => to_stdulogic(OUTP_RST));
                 elsif ( rising_edge(C) ) then
                     voter_ffs <= voter_ffs(voter_ffs'left-1 downto voter_ffs'right) & synced;
                 end if;
@@ -123,7 +123,7 @@ begin
             p_rsff : process( R, C )
             begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
-                    OUTP <= to_stdulogic(O_RST);
+                    OUTP <= to_stdulogic(OUTP_RST);
                 elsif ( rising_edge(C) ) then
                     if ( ('1' = rsff_set) and ('0' = rsff_reset) ) then
                         OUTP <= '1';
