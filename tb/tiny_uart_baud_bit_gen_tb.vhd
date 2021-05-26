@@ -45,8 +45,9 @@ architecture sim of tiny_uart_baud_bit_gen_tb is
     -----------------------------
     -- Constant
         -- DUT
-        constant NUMBIT     : positive  := 3;
-        constant CLKDIV2    : positive  := 4;
+        constant NUMBIT         : positive  := 3;
+        constant CLKDIV2        : positive  := 4;
+        constant SKIP_LAST_BIT2 : boolean   := false;
 
         -- Clock
         constant tclk   : time  := 1 us;        --! 1MHz clock
@@ -77,8 +78,9 @@ begin
     -- DUT
     DUT : entity work.tiny_uart_baud_bit_gen
         generic map (
-                        NUMBIT  => NUMBIT,
-                        CLKDIV2 => CLKDIV2
+                        NUMBIT          => NUMBIT,
+                        CLKDIV2         => CLKDIV2,
+                        SKIP_LAST_BIT2  => SKIP_LAST_BIT2
                     )
         port map    (
                         R           => R,
@@ -123,7 +125,67 @@ begin
             START   <=  '1';
             wait until rising_edge(C); wait for tskew;
             START   <=  '0';
+            --
+            assert ( '1' = SFR_LD ) report "  Error: Failed Load TX SFR" severity warning;
+            if not ( '1' = SFR_LD ) then good := false; end if;
+            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
             wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            --
+            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            --
+            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            wait until rising_edge(C); wait for tskew;
+            --
+            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
+            assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
+            --
+            assert ( BUSY'stable((2*CLKDIV2-1)*tclk) ) report "  Error: Busy unexpected toggled" severity warning;
+            if not ( BUSY'stable((2*CLKDIV2-1)*tclk) ) then good := false; end if;
+            assert ( '1' = BUSY ) report "  Error: Needs to be busy" severity warning;
+            if not ( '1' = BUSY ) then good := false; end if;
             while ( '1' = BUSY ) loop
                 wait until rising_edge(C); wait for tskew;
             end loop;
