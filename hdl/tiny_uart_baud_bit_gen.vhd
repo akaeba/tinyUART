@@ -34,8 +34,9 @@ library ieee;
 -- baudrate und bit generator
 entity tiny_uart_baud_bit_gen is
 generic (
-            NUMBIT  : positive  := 10;  --! number of bits to handle
-            CLKDIV2 : positive  := 8    --! half bit period clock divider, TBIT = 2*CLKDIV2
+            NUMBIT          : positive  := 10;      --! number of bits to handle
+            CLKDIV2         : positive  := 8;       --! half bit period clock divider, TBIT = 2*CLKDIV2
+            SKIP_LAST_BIT2  : boolean   := false    --! true: skips in last bit second half periode wait, increases SNR in RX
         );
 port    (
             -- Clock/Reset
@@ -248,7 +249,15 @@ begin
                 -- transmission
                 when TRANSFER =>
                     if ( ('1' = bit_cntr_is_zero) and ('1' = baud_cntr_is_zero) and ('0' = baud_half_per) ) then
-                        next_state <= TFEND;
+                        if ( '1' = START ) then         --! New data is available, run in next cycle
+                            next_state <= TRANSFER;
+                        else                            --! no new data, go in force wait
+                            if ( SKIP_LAST_BIT2 ) then  --! RX Mode
+                                next_state <= IDLE;
+                            else                        --! TX MOde
+                                next_state <= TFEND;
+                            end if;
+                        end if;
                     else
                         next_state <= TRANSFER;
                     end if;
