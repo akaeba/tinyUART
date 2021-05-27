@@ -43,6 +43,6 @@ set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD RR[*] PE FE DR TH
 
 # False paths
 #
-set_false_path -from *                  -to {tiny_uart_inp_filter:\g_rx:i_tiny_uart_inp_filter|sync_ffs[0]};    # UART is always asynchron, therefore false path
-set_false_path -from [get_ports {R}]    -to *;                                                                  # Reset, cause at the moment no RST sync
+set_false_path -from *                  -to [get_pins -compatibility_mode *i_tiny_uart_inp_filter|sync_ffs[0]|d];   # UART is always asynchron, therefore false path
+set_false_path -from [get_ports {R}]    -to *;                                                                      # Reset, cause at the moment no RST sync
 #
