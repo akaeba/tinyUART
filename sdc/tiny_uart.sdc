@@ -1,16 +1,19 @@
 ##************************************************************************
-## @copyright   LGPLv3
-## @author      akae
+## @author:         Andreas Kaeberlein
+## @copyright:      Copyright 2021
+## @credits:        AKAE
 ##
-## @file        tiny_uart.sdc
+## @license:        BSDv3
+## @maintainer:     Andreas Kaeberlein
+## @email:          andreas.kaeberlein@web.de
 ##
-## @brief       Design constraints
-## @details
+## @file:           tiny_uart.sdc
+## @date:           2018-08-13
 ##
-## @date        2018-08-13
-## @version     0.1
+## @see:            https://github.com/akaeba/tinyUART
+## @brief:          Design constraints
+##
 ##************************************************************************
-
 
 
 # Primary Clocks
@@ -28,18 +31,18 @@ derive_clock_uncertainty
 
 # Input Delay
 #
-set_input_delay -clock {clk50} 5.0 [get_ports {TX[*] TXCE RXD}];
+set_input_delay -clock {clk50} 5.0 [get_ports {TR[*] THRL RXD}];
 #
 
 
 # Output Delay
 #
-set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD FRMERO RX[*] RXCE TXMTY BSY}];
+set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD RR[*] PE FE DR THRE BSY}];
 #
 
 
-# False pathes
+# False paths
 #
-set_false_path -from *                  -to {tiny_uart_sfr:i_rx_sync_debounce|sfr_q[0]};    # UART is always asynchron, therefore false path
-set_false_path -from [get_ports {R}]    -to *;                                              # Reset, cause at the moment no RST sync
+set_false_path -from *                  -to {tiny_uart_inp_filter:\g_rx:i_tiny_uart_inp_filter|sync_ffs[0]};    # UART is always asynchron, therefore false path
+set_false_path -from [get_ports {R}]    -to *;                                                                  # Reset, cause at the moment no RST sync
 #
