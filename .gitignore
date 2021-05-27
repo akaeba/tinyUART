@@ -45,4 +45,5 @@ fpga/*_sim/
 fpga/incremental_db/
 fpga/db/
 fpga/output_files/
+fpga/*.qws
 #
