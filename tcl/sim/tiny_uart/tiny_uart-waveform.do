@@ -26,8 +26,18 @@ add wave -noupdate /tiny_uart_tb/DUT/tx_hold_empty
 add wave -noupdate /tiny_uart_tb/DUT/tx_hold_new
 add wave -noupdate /tiny_uart_tb/DUT/g_tx/i_tx_baud_bit_gen/current_state
 add wave -noupdate /tiny_uart_tb/DUT/g_tx/i_tx_baud_bit_gen/next_state
+add wave -noupdate -divider RX
+add wave -noupdate /tiny_uart_tb/DUT/rx_nedge
+add wave -noupdate -radix hexadecimal /tiny_uart_tb/DUT/rx_sfr
+add wave -noupdate /tiny_uart_tb/DUT/rx_sfr_shift
+add wave -noupdate /tiny_uart_tb/DUT/rx_sfr_cap
+add wave -noupdate -radix hexadecimal /tiny_uart_tb/DUT/rx_hold
+add wave -noupdate /tiny_uart_tb/DUT/fe_comb
+add wave -noupdate /tiny_uart_tb/DUT/pe_comb
+add wave -noupdate /tiny_uart_tb/DUT/g_rx/i_rx_baud_bit_gen/current_state
+add wave -noupdate /tiny_uart_tb/DUT/g_rx/i_rx_baud_bit_gen/next_state
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {286095506 ps} 0}
+WaveRestoreCursors {{Cursor 1} {178441011 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 394
 configure wave -valuecolwidth 82
