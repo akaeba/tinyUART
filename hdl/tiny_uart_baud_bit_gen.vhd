@@ -36,14 +36,14 @@ entity tiny_uart_baud_bit_gen is
 generic (
             NUMBIT          : positive  := 10;      --! number of bits to handle
             CLKDIV2         : positive  := 8;       --! half bit period clock divider, TBIT = 2*CLKDIV2
-            SKIP_LAST_BIT2  : boolean   := false    --! true: skips in last bit second half periode wait, increases SNR in RX
+            SKIP_LAST_BIT2  : boolean   := false    --! true: skips in last bit second half period wait, increases SNR in RX
         );
 port    (
             -- Clock/Reset
             R           : in    std_logic;  --! asynchronous reset
             C           : in    std_logic;  --! clock, rising edge
             -- Control
-            START       : in    std_logic;  --! transfer started
+            START       : in    std_logic;  --! start interaction
             BUSY        : out   std_logic;  --! transfer active
             -- SFR
             SFR_LD      : out   std_logic;  --! load parallel input of shift register
