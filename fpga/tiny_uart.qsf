@@ -52,10 +52,8 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name SDC_FILE ../05_sdc/tiny_uart.sdc
-set_global_assignment -name VHDL_FILE ../01_src/tiny_uart_tx.vhd
-set_global_assignment -name VHDL_FILE ../01_src/tiny_uart_sfr.vhd
-set_global_assignment -name VHDL_FILE ../01_src/tiny_uart_rx.vhd
-set_global_assignment -name VHDL_FILE ../01_src/tiny_uart_cntr.vhd
-set_global_assignment -name VHDL_FILE ../01_src/tiny_uart.vhd
+set_global_assignment -name SDC_FILE ../sdc/tiny_uart.sdc
+set_global_assignment -name VHDL_FILE ../hdl/tiny_uart.vhd
+set_global_assignment -name VHDL_FILE ../hdl/tiny_uart_inp_filter.vhd
+set_global_assignment -name VHDL_FILE ../hdl/tiny_uart_baud_bit_gen.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
