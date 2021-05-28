@@ -27,12 +27,8 @@ set path_src "../hdl"
 
 # Compile Design
 #
-vcom -93 $path_src/tiny_uart_sfr.vhd
-vcom -93 $path_src/tiny_uart_cntr.vhd
 vcom -93 $path_src/tiny_uart_inp_filter.vhd
 vcom -93 $path_src/tiny_uart_baud_bit_gen.vhd
-vcom -93 $path_src/tiny_uart_tx.vhd
-vcom -93 $path_src/tiny_uart_rx.vhd
 vcom -93 $path_src/tiny_uart.vhd
 #
 
