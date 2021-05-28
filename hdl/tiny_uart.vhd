@@ -84,7 +84,7 @@ port    (
             TR      : in    std_logic_vector(WLS-1 downto 0);   --! Transmit Holding Register Data Input
             THRE    : out   std_logic;                          --! Transmitter Holding Register Empty
             THRL    : in    std_logic;                          --! Transmitter Holding Register Load, one clock cycle high
-            BSY     : out   std_logic                           --! transmission active
+            TRE     : out   std_logic                           --! Transmitter Register Empty
         );
 end entity tiny_uart;
 --------------------------------------------------------------------------
@@ -277,8 +277,9 @@ begin
 
         --***************************
         -- Output Assignment
-        THRE    <= tx_hold_empty;
-        TXD     <= tx_sfr(tx_sfr'left);
+        THRE    <= tx_hold_empty;       --! hold register empty
+        TRE     <= not bsy_tx;          --! transmitter register empty
+        TXD     <= tx_sfr(tx_sfr'left); --! serial uart data
         --***************************
 
     end generate g_tx;
@@ -292,7 +293,7 @@ begin
 
         THRE    <= '0';
         TXD     <= '1';
-        bsy_tx  <= '0';
+        TRE     <= '0';
 
     end generate g_skip_tx;
     ----------------------------------------------
@@ -374,8 +375,8 @@ begin
         --***************************
         -- Glue Logic
             -- misc
-            rx_nedge    <= (not rx_bit) and rx_bit_dly1;
-            fe_comb     <= not ((not rx_sfr(rx_sfr'left)) and rx_bit);  --! start bit: left, stop bit sfr input
+            rx_nedge    <= (not rx_bit) and rx_bit_dly1 and (not bsy_rx);   --! falling edge detection, only active if not busy
+            fe_comb     <= not ((not rx_sfr(rx_sfr'left)) and rx_bit);      --! start bit: left, stop bit sfr input
 
             -- parity calc & check
             g_pe : if ( false = PI ) generate
@@ -389,13 +390,6 @@ begin
         --***************************
 
     end generate g_rx;
-    ----------------------------------------------
-
-
-    ----------------------------------------------
-    -- assignments
-        -- busy
-    BSY <= bsy_rx or bsy_tx;    --! signal rx/tx activity
     ----------------------------------------------
 
 end architecture rtl;
