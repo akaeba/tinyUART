@@ -71,7 +71,7 @@ port    (
             PE      : out   std_logic;                          --! Parity error
             FE      : out   std_logic;                          --! Framing error
             DR      : out   std_logic;                          --! Data Received, one clock cycle high
-            TR      : in    std_logic_vector(WLS-1 downto 0);   --! Transmit Holding Register Data Input
+            TR      : in    std_logic_vector(WLS-1 downto 0);   --! Transmitter Holding Register Data Input
             THRE    : out   std_logic;                          --! Transmitter Holding Register Empty
             THRL    : in    std_logic;                          --! Transmitter Holding Register Load, one clock cycle high
             TRE     : out   std_logic                           --! Transmitter Register Empty
