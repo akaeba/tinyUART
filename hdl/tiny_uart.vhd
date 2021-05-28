@@ -23,13 +23,6 @@
 -- Important Hints:
 -- ================
 --
---  Settings (adjustable at compile time)
---  -------------------------------------
---      DWIDTH:     number of data bits
---      CLK_HZ:     clock frequency in Hz
---      BAUD_BPS:   Baud rate in BPS
---      DEBOUNCE:   voter sample, avoid false detection if sync stages latches accidentally the wrong value
---
 --  Miscellaneous
 --  -------------
 --      parity:     none, even, odd
@@ -39,9 +32,6 @@
 --  Typical Baud-rates
 --  ------------------
 --      9600, 19200, 38400, 57600, 115200, 230400
---
---
---
 --
 
 
@@ -390,6 +380,20 @@ begin
         --***************************
 
     end generate g_rx;
+    ----------------------------------------------
+
+
+    ----------------------------------------------
+    -- Skip Rx
+    ----------------------------------------------
+    g_skip_rx : if ( false = RXIMPL ) generate
+
+        RR  <= (others => '0');
+        PE  <= '0';
+        FE  <= '0';
+        DR  <= '0';
+
+    end generate g_skip_rx;
     ----------------------------------------------
 
 end architecture rtl;
