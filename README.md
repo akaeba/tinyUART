@@ -1,18 +1,20 @@
-# tinyUART
-[UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
-
 - [tinyUART](#tinyuart)
+  * [Releases](#releases)
   * [Features](#features)
   * [Interface](#interface)
-    + [Table of generics](#table-of-generics)
-    + [Table of ports](#table-of-ports)
+    + [Generics](#generics)
+    + [Ports](#ports)
   * [Architecture](#architecture)
-  * [Interface timing](#interface-timing)
+  * [Timing](#timing)
     + [TX](#tx)
     + [RX](#rx)
   * [FPGA resource allocation](#fpga-resource-allocation)
   * [Used Tools](#used-tools)
   * [References](#references)
+
+
+# tinyUART
+[UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
 
 
 ## Releases
@@ -34,33 +36,37 @@
 
 ## Interface
 
-### Table of generics
+### Generics
 
-| Name     | Type     | Default | Description                                          |
-| -------- | -------- | ------- | ---------------------------------------------------- |
-| DWIDTH   | integer  | 8       | data width                                           |
-| CLK_HZ   | positive | 50e6    | core clock frequency in Hz                           |
-| BAUD_BPS | positive | 115200  | UART transmission speed in baud per second           |
-| STOPBIT  | integer  | 1       | number of stop bits, fracs not allowed               |
-| RXSYNC   | integer  | 2       | data input to clock synchronization flip-flop stages |
-| DEBOUNCE | integer  | 1       | majority voter for input debouncing; stages: 2n+1    |
+| Name   | Default    | Values   | Description                       |
+| ------ | ---------- | -------- | --------------------------------- |
+| WLS    | 8          | 5..8     | word length select                |
+| CLK    | 50_000_000 | positive | master clock frequency in Hz      |
+| BPS    | 115200     | positive | baud rate per second              |
+| SBS    | 1          | 1..2     | Stop bit select                   |
+| PI     | true       | boolean  | Parity inhibit                    |
+| EPE    | true       | boolean  | Even parity enable, otherwise odd |
+| DEBU   | 3          | 0..11    | debouncer stages                  |
+| TXIMPL | true       | boolean  | TX path implemented               |
+| RXIMPL | true       | boolean  | RX path implemented               |
 
 
-### Table of ports
+### Ports
 
-| Port     | Direction | Width  | Description                                        |
-| -------- | --------- | ------ | -------------------------------------------------- |
-| R        | input     | 1b     | asynchronous reset                                 |
-| C        | input     | 1b     | clock, rising-edge only used                       |
-| TXD      | output    | 1b     | serial UART output                                 |
-| RXD      | input     | 1b     | serial UART input                                  |
-| FRMERO   | output    | 1b     | framing error; start and stop bit not as expected  |
-| RX       | output    | 4b..8b | received data value; highest bit is MSB            |
-| RXCE     | output    | 1b     | new data value available, one clock cycle high     |
-| TX       | input     | 4b..8b | transmit data value; highest bit is MSB            |
-| TXMTY    | output    | 1b     | tx buffer register empty; ready to write new value |
-| TXCE     | input     | 1b     | write data value to transmit; one clock cycle high |
-| BSY      | output    | 1b     | RX and/or TX path is active                        |
+| Port | Dir | Width  | Description                             |
+| ---- | --- | ------ | --------------------------------------- |
+| R    | in  | 1b     | asynchronous reset                      |
+| C    | in  | 1b     | clock, rising-edge only                 |
+| TXD  | out | 1b     | serial UART output                      |
+| RXD  | in  | 1b     | serial UART input                       |
+| RR   | out | 5b..8b | Receiver Holding Register Data Output   |
+| PE   | out | 1b     | Parity error                            |
+| FE   | out | 1b     | Framing error                           |
+| DR   | out | 1b     | Data Received, one clock cycle high     |
+| TR   | in  | 5b..8b | Transmitter Holding Register Data Input |
+| THRE | out | 1b     | Transmitter Holding Register Empty      |
+| THRL | in  | 1b     | Transmitter Holding Register Load       |
+| TRE  | out | 1b     | Transmitter Register Empty              |
 
 
 ## Architecture
@@ -70,7 +76,7 @@
 <br/>
 
 
-## Interface timing
+## Timing
 
 ### TX
 
@@ -84,9 +90,11 @@
 
 ## FPGA resource allocation
 
-| Entity    | Logic Elements | Registers | BRAM | Fmax   |
-| --------- | -------------- | --------- | ---- | ------ |
-| tiny_uart | 104            | 77        | 0    | 324MHz |
+| Technology | HDL generics                        | Logic | Registers | BRAM | F<sub>max</sub> |
+| ---------- | ----------------------------------- | ----- | --------- | ---- | --------------- |
+| Cyclone 10 | [defaults](#Generics)               | 89LEs | 79FF      | 0    | 89.61MHz        |
+| Cyclone 10 | [defaults](#Generics), TXIMPL=false | 43LEs | 41FF      | 0    | 89.61MHz        |
+| Cyclone 10 | [defaults](#Generics), RXIMPL=false | 50LEs | 38FF      | 0    | 89.67MHz        |
 
 
 ## Used Tools
@@ -104,3 +112,4 @@
 
 * [Wikipedia: UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter)
 * [Wikipedia: Parity](https://en.wikipedia.org/wiki/Parity_bit)
+* [Western Digital: TR1602](https://datasheetspdf.com/pdf-file/1412122/WesternDigital/TR1602/1)
