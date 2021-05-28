@@ -37,7 +37,7 @@ set_input_delay -clock {clk50} 5.0 [get_ports {TR[*] THRL RXD}];
 
 # Output Delay
 #
-set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD RR[*] PE FE DR THRE BSY}];
+set_output_delay -add_delay -clock {clk50} 5.0 [get_ports {TXD RR[*] PE FE DR THRE TRE}];
 #
 
 
