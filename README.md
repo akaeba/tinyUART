@@ -70,8 +70,11 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 
 ## Architecture
 
+The block diagram visualizes the simplified _tinyUART_ architecture. Blocks with solid lines are own sub entities. All blocks with dashed lines are implemented
+in the top level.
+
 <br/>
-<center><img src="./doc/readme/tiny_uart_arch.svg" height="75%" width="75%" alt="block level diagram" title="tiny UART simplified system architecture" /></center>
+<center><img src="./doc/readme/tiny_uart_arch.svg" height="50%" width="50%" alt="block level diagram" title="tiny UART simplified system architecture" /></center>
 <br/>
 
 
