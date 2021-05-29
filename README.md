@@ -8,13 +8,12 @@
   * [Timing](#timing)
     + [TX](#tx)
     + [RX](#rx)
-  * [FPGA resource allocation](#fpga-resource-allocation)
-  * [Used Tools](#used-tools)
+  * [Resource allocation](#resource-allocation)
   * [References](#references)
 
 
 # tinyUART
-[UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
+Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
 
 
 ## Releases
@@ -88,7 +87,7 @@
 <center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
 
 
-## FPGA resource allocation
+## Resource allocation
 
 | Technology | HDL generics                        | Logic | Registers | BRAM | F<sub>max</sub> |
 | ---------- | ----------------------------------- | ----- | --------- | ---- | --------------- |
@@ -96,16 +95,6 @@
 | Cyclone 10 | [defaults](#Generics), TXIMPL=false | 43LEs | 41FF      | 0    | 89.61MHz        |
 | Cyclone 10 | [defaults](#Generics), RXIMPL=false | 50LEs | 38FF      | 0    | 89.67MHz        |
 
-
-## Used Tools
-
-| Task            | Tool                                                                                     |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| VHDL entry      | [Notepad++](https://notepad-plus-plus.org)                                               |
-| VHDL simulation | [ModelSim-Intel FPGA Edition](http://fpgasoftware.intel.com/?product=modelsim_ae#tabs-2) |
-| FPGA synthesis  | [Quartus Prime Lite Edition (Free)](http://fpgasoftware.intel.com/?edition=lite)         |
-| block diagram   | MS Visio 2013                                                                            |
-| timing diagram  | [WaveDrom](https://github.com/wavedrom/wavedrom.github.io/releases)                      |
 
 
 ## References
