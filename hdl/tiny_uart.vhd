@@ -173,7 +173,6 @@ architecture rtl of tiny_uart is
         signal bsy_rx           : std_logic;                                        --! receive active
         signal fe_comb          : std_logic;                                        --! calculated framing error
         signal pe_comb          : std_logic;                                        --! calculated parity
-
     -----------------------------
 
 begin
