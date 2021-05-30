@@ -30,7 +30,7 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 * buffer register on RX and TX
 * parameterizable data size
 * one or two stop bits
-* variable baud rate at compile time
+* settable baud rate
 
 
 ## Interface
@@ -48,6 +48,8 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 | DEBU   | 3          | 0..11    | debouncer stages                  |
 | TXIMPL | true       | boolean  | TX path implemented               |
 | RXIMPL | true       | boolean  | RX path implemented               |
+
+_Settable at compile time._
 
 
 ### Ports
@@ -82,12 +84,12 @@ in the top level.
 
 ### TX
 
-<center><img src="./doc/readme/tiny_uart_if_timing_tx.svg" height="125%" width="125%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_tx.svg" height="125%" width="125%" alt="timing diagram tiny UART" title="UART transmit interface timing " /></center>
 
 
 ### RX
 
-<center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART receive" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="125%" width="125%" alt="timing diagram tiny UART" title="UART receive interface timing" /></center>
 
 
 ## Resource allocation
