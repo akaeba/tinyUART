@@ -89,7 +89,7 @@ in the top level.
 
 ### RX
 
-<center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="125%" width="125%" alt="timing diagram tiny UART" title="UART receive interface timing" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_rx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="UART receive interface timing" /></center>
 
 
 ## Resource allocation
