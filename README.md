@@ -39,7 +39,7 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 
 | Name   | Default    | Values   | Description                       |
 | ------ | ---------- | -------- | --------------------------------- |
-| WLS    | 8          | 5..8     | word length select                |
+| WLS    | 8          | 5..8     | word length select; data bits     |
 | CLK    | 50_000_000 | positive | master clock frequency in Hz      |
 | BPS    | 115200     | positive | baud rate per second              |
 | SBS    | 1          | 1..2     | Stop bit select                   |
@@ -82,7 +82,7 @@ in the top level.
 
 ### TX
 
-<center><img src="./doc/readme/tiny_uart_if_timing_tx.svg" height="100%" width="100%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
+<center><img src="./doc/readme/tiny_uart_if_timing_tx.svg" height="125%" width="125%" alt="timing diagram tiny UART" title="interface timing UART transmit" /></center>
 
 
 ### RX
