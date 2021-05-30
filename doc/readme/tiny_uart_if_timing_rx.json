@@ -20,7 +20,7 @@ edge: [
    'a<->b start', 'b<->c dat0', 'c<->d stop',
 ],
 foot:{
- text:'UART recieve timing',
+ text:'UART receive timing',
  tock: 1
 },
 }
