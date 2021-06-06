@@ -21,6 +21,7 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 | Version                                                  | Date       | Source                                                                                                 | Change log                                                                               |
 | -------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | latest                                                   |            | <a id="raw-url" href="https://github.com/akaeba/tinyUART/archive/refs/heads/master.zip">latest.zip</a> |                                                                                          |
+| [v0.2.0](https://github.com/akaeba/tinyUART/tree/v0.2.0) | 2021-06-06 | <a id="raw-url" href="https://github.com/akaeba/tinyUART/archive/refs/tags/v0.2.0.zip">v0.2.0.zip</a>  | revised interface and architecture, new debouncer                                        |
 | [v0.1.0](https://github.com/akaeba/tinyUART/tree/v0.1.0) | 2018-09-06 | <a id="raw-url" href="https://github.com/akaeba/tinyUART/archive/refs/tags/v0.1.0.zip">v0.1.0.zip</a>  | initial draft                                                                            |
 
 
@@ -94,11 +95,11 @@ in the top level.
 
 ## Resource allocation
 
-| Technology | HDL generics                        | Logic | Registers | BRAM | F<sub>max</sub> |
-| ---------- | ----------------------------------- | ----- | --------- | ---- | --------------- |
-| Cyclone 10 | [defaults](#Generics)               | 89LEs | 79FF      | 0    | 89.61MHz        |
-| Cyclone 10 | [defaults](#Generics), TXIMPL=false | 43LEs | 41FF      | 0    | 89.61MHz        |
-| Cyclone 10 | [defaults](#Generics), RXIMPL=false | 50LEs | 38FF      | 0    | 89.67MHz        |
+| Technology | EDA                                                        | HDL generics                        | Logic | Registers | BRAM | F<sub>max</sub> |
+| ---------- | ---------------------------------------------------------- | ----------------------------------- | ----- | --------- | ---- | --------------- |
+| Cyclone 10 | [Q18.1](https://fpgasoftware.intel.com/18.1/?edition=lite) | [defaults](#Generics)               | 89LEs | 79FF      | 0    | 89.61MHz        |
+| Cyclone 10 | [Q18.1](https://fpgasoftware.intel.com/18.1/?edition=lite) | [defaults](#Generics), TXIMPL=false | 43LEs | 41FF      | 0    | 89.61MHz        |
+| Cyclone 10 | [Q18.1](https://fpgasoftware.intel.com/18.1/?edition=lite) | [defaults](#Generics), RXIMPL=false | 50LEs | 38FF      | 0    | 89.67MHz        |
 
 
 
