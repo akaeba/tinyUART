@@ -8,7 +8,7 @@
 -- @email:          andreas.kaeberlein@web.de
 --
 -- @note:           VHDL'93
--- @file:           tiny_uart_cntr.vhd
+-- @file:           tiny_uart.vhd
 -- @date:           2018-08-03
 --
 -- @see:            https://github.com/akaeba/tinyUART
