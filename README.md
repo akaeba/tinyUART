@@ -32,6 +32,7 @@ Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver
 * parameterizable data size
 * one or two stop bits
 * settable baud rate
+* optional parity (odd/even)
 
 
 ## Interface
