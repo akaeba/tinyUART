@@ -1,19 +1,19 @@
-- [tinyUART](#tinyuart)
-  * [Releases](#releases)
-  * [Features](#features)
-  * [Interface](#interface)
-    + [Generics](#generics)
-    + [Ports](#ports)
-  * [Architecture](#architecture)
-  * [Timing](#timing)
-    + [TX](#tx)
-    + [RX](#rx)
-  * [Resource allocation](#resource-allocation)
-  * [References](#references)
-
+[![Unittest](https://github.com/akaeba/tinyUART/workflows/Unittest/badge.svg)](https://github.com/akaeba/tinyUART/actions)
 
 # tinyUART
 Lightweight [UART](https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter) core written in VHDL.
+
+- [Releases](#releases)
+- [Features](#features)
+- [Interface](#interface)
+  * [Generics](#generics)
+  * [Ports](#ports)
+- [Architecture](#architecture)
+- [Timing](#timing)
+  * [TX](#tx)
+  * [RX](#rx)
+- [Resource allocation](#resource-allocation)
+- [References](#references)
 
 
 ## Releases
