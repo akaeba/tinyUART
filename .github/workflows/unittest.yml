@@ -1,0 +1,44 @@
+# ************************************************************************
+#  @author:     Andreas Kaeberlein
+#  @copyright:  Copyright 2021
+#  @credits:    AKAE
+#
+#  @license:    BSDv3
+#  @maintainer: Andreas Kaeberlein
+#  @email:      andreas.kaeberlein@web.de
+#
+#  @file:       unittest.yml
+#  @date:       2021-09-01
+#
+#  @brief:      runs test and deploy
+#
+# ************************************************************************
+
+
+name: Unittest
+
+on:
+  push:
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GHDL_OPTS: "--std=93c --ieee=synopsys --time-resolution=ps --workdir=./sim/work"
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ghdl/setup-ghdl-ci@nightly
+        with:
+          backend: mcode
+      - name: Prepare
+        run: |
+          ghdl --version
+          mkdir -p ./sim/work
+      - name: tiny_uart_inp_filter_tb
+        run: |
+          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_inp_filter.vhd
+          ghdl -a ${GHDL_OPTS} ./tb/tiny_uart_inp_filter_tb.vhd
+          ((ghdl -r ${GHDL_OPTS} tiny_uart_inp_filter_tb -gDO_ALL_TEST=True) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_inp_filter_tb"; exit 1; fi)

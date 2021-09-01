@@ -67,6 +67,8 @@ architecture sim of tiny_uart_inp_filter_tb is
         signal CLK  : std_logic;
         signal INP  : std_logic;
         signal OUTP : std_logic;
+        -- TB
+        signal CLKENA   : std_logic := '1';     --! clock gating
     -----------------------------
 
 begin
@@ -77,7 +79,7 @@ begin
             generic map (
                             SYNC_STAGES     => SYNC_STAGES,
                             VOTER_STAGES    => VOTER_STAGES,
-                            O_RST           => RST_STRBO,
+                            OUTP_RST        => RST_STRBO,
                             RST_ACTIVE      => RST_ACTIVE
                         )
             port map    (
@@ -152,7 +154,7 @@ begin
             Report "Test1: Switch to one and apply noisy signal";
             wait until rising_edge(CLK); wait for tskew;
             INP <= '1';
-            for INP in 0 to 4 loop
+            for i in 0 to 4 loop
                 wait until rising_edge(CLK); wait for tskew;
             end loop;
             INP <= '0';
@@ -214,8 +216,10 @@ begin
             if (good) then
                 Report "Test SUCCESSFUL";
             else
-                Report "Test FAILED" severity error;
+                Report "Test FAILED" severity failure;
             end if;
+            wait until falling_edge(CLK); wait for tskew;
+            CLKENA <= '0';
             wait;                   -- stop process continuous run
         -------------------------
 
@@ -228,11 +232,12 @@ begin
     p_clk : process
         variable v_clk : std_logic := '0';
     begin
-        while true loop
+        while ( '1' = CLKENA ) loop
             CLK     <= v_clk;
             v_clk   := not v_clk;
             wait for tclk/2;
-            end loop;
+        end loop;
+        wait;
     end process p_clk;
     ----------------------------------------------
 
