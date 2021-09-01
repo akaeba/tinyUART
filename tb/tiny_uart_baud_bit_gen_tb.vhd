@@ -70,6 +70,8 @@ architecture sim of tiny_uart_baud_bit_gen_tb is
         signal SFR_S_BEGIN  : std_logic;
         signal SFR_S_MIDLE  : std_logic;
         signal SFR_CAP      : std_logic;
+        -- TB
+        signal CLKENA   : std_logic := '1';     --! clock gating
     -----------------------------
 
 begin
@@ -200,8 +202,10 @@ begin
             if (good) then
                 Report "Test SUCCESSFUL";
             else
-                Report "Test FAILED" severity error;
+                Report "Test FAILED" severity failure;
             end if;
+            wait until falling_edge(C); wait for tskew;
+            CLKENA <= '0';
             wait;                   -- stop process continuous run
         -------------------------
 
@@ -212,13 +216,14 @@ begin
     ----------------------------------------------
     -- clock
     p_clk : process
-        variable clk : std_logic := '0';
+        variable v_clk : std_logic := '0';
     begin
-        while true loop
-            C   <= clk;
-            clk := not clk;
+        while ( '1' = CLKENA ) loop
+            C       <= v_clk;
+            v_clk   := not v_clk;
             wait for tclk/2;
-            end loop;
+        end loop;
+        wait;
     end process p_clk;
     ----------------------------------------------
 
