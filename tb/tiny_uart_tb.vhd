@@ -121,7 +121,7 @@ begin
 
 
     ----------------------------------------------
-    -- registers
+    -- stimuli
     p_stimuli_process : process
         -- tb help variables
             variable good   : boolean                       := true;

@@ -71,11 +71,15 @@
 --                                         R            R      R/W
 --                                       "---"          '0'    '0'
 --
---             SIZE - FIFO size
---                      0d :  0 Byte
---                      1d : 16 Byte
---                      2d : 32 Byte
---                      3d : 64 Byte
+--             SIZE - FIFO size = 2^(SIZE) in Bytes
+--                      0d :   1 Byte
+--                      1d :   2 Byte
+--                      2d :   4 Byte
+--                      3d :   8 Byte
+--                      4d :  16 Byte
+--                      5d :  32 Byte
+--                      6d :  64 Byte
+--                      7d : 128 Byte
 --             BSY - Busy (RX and/or TX active)
 --             IE  - Interrupt enable
 --
