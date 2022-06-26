@@ -46,38 +46,38 @@
 --                                     R/W
 --                                 "00000000"
 --
---    Status/Control:
+--    Status:
 --             7      6      5      4      3      2      1      0
 --          +------+------+------+------+------+------+------+------+
---    +0x1  | '0'  | '0'  | '0'  | PE   | FE   | BSY  | IRQ  | IE   |
+--    +0x1  | PE   | FE   | TFE  | TFF  | RFO  | RFE  | RFF  | IRQ  |
 --          +------+------+------+------+------+------+------+------+
---                                 R/W0   R/W0   R      R/W0   R/W
---                                 '0'    '0'    '0'    '0'    '0'
+--            R/W0   R/W0    R      R     R/W0    R      R     R/W0
+--            '0'    '0'    '1'    '0'    '0'    '1'    '0'    '0'
 --
 --             PE  - Parity Error, clear write zero
 --             FE  - Framing error, clear write zero
---             BSY - Busy (RX and/or TX active)
+--             TFE  - Transmit FIFO empty
+--             TFF  - Transmit FIFO full
+--             RFO  - Receive FIFO overflow, clear write zero
+--             RFE  - Receive FIFO empty
+--             RFF  - Receive FIFO full
 --             IRQ - Interrupt Request, needs to be cleared after ISR
---             IE  - Interrupt enable
 --
---    FIFO:
+--    Control:
 --             7      6      5      4      3      2      1      0
 --          +------+------+------+------+------+------+------+------+
---    +0x2  |        SIZE        | TFE  | TFF  | RFO  | RFE  | RFF  |
+--    +0x2  | '0'  | '0'  | '0'  |        SIZE        | BSY  | IE   |
 --          +------+------+------+------+------+------+------+------+
---                    R             R      R      R/W0   R      R
---                  "---"          '1'    '0'    '0'    '1'    '0'
+--                                         R            R      R/W
+--                                       "---"          '0'    '0'
 --
 --             SIZE - FIFO size
 --                      0d :  0 Byte
 --                      1d : 16 Byte
 --                      2d : 32 Byte
 --                      3d : 64 Byte
---             TFE  - Transmit FIFO empty
---             TFF  - Transmit FIFO full
---             RFO  - Receive FIFO overflow, clear write zero
---             RFE  - Receive FIFO empty
---             RFF  - Receive FIFO full
+--             BSY - Busy (RX and/or TX active)
+--             IE  - Interrupt enable
 --
 --    Configuration (Compile):
 --             7      6      5      4      3      2      1      0
@@ -159,20 +159,20 @@ architecture rtl of tiny_uart_wb32 is
     -- Constants
     ----------------------------------------------
         -- bit indexes
-            -- Status/Control
-        constant cPE    : integer := 4; --! Parity error
-        constant cFE    : integer := 3; --! Framing error
-        constant cBSY   : integer := 2; --! Busy
-        constant cIRQ   : integer := 1; --! interrupt request
+            -- Status
+        constant cPE    : integer := 7; --! Parity error
+        constant cFE    : integer := 6; --! Framing error
+        constant cTFE   : integer := 5; --! transmit FIFO empty
+        constant cTFF   : integer := 4; --! transmit FIFO full
+        constant cRFO   : integer := 3; --! Receive FIFO overflow
+        constant cRFE   : integer := 2; --! Receive FIFO empty
+        constant cRFF   : integer := 1; --! receive FIFO full
+        constant cIRQ   : integer := 0; --! interrupt request
+            -- Control
+        constant cSZH   : integer := 4; --! Size High bit
+        constant cSZL   : integer := 2; --! Size Low bit
+        constant cBSY   : integer := 1; --! Busy
         constant cIE    : integer := 0; --! interrupt enable
-            -- FIFO
-        constant cSZH   : integer := 7; --! Size High bit
-        constant cSZL   : integer := 5; --! Size Low bit
-        constant cTFE   : integer := 4; --! transmit FIFO empty
-        constant cTFF   : integer := 3; --! transmit FIFO full
-        constant cRFO   : integer := 2; --! Receive FIFO overflow
-        constant cRFE   : integer := 1; --! Receive FIFO empty
-        constant cRFF   : integer := 0; --! recieve FIFO full
             -- Config
         constant cTX    : integer := 7; --! Transmit path implemented
         constant cRX    : integer := 6; --! Receive path implemented
@@ -184,7 +184,7 @@ architecture rtl of tiny_uart_wb32 is
         -- byte Indexes
         constant cDATA  : integer := 0; --! +0x0 Data offset
         constant cSTS   : integer := 1; --! +0x1 Status/control offset
-        constant cFIFO  : integer := 2; --! +0x2 FIFO offset
+        constant cCTRL  : integer := 2; --! +0x2 FIFO offset
         constant cCFG   : integer := 3; --! +0x3 Configuration offset
     ----------------------------------------------
 
@@ -195,8 +195,8 @@ architecture rtl of tiny_uart_wb32 is
         -- UART Core
         signal rst_sync     : std_logic;
         signal rx_data      : std_logic_vector(7 downto 0); --! UART receive data
-        signal tx_new       : std_logic;    --! new data from wishbone ITF
-        signal tx_empty     : std_logic;    --! uart core is ready for new data
+        signal tx_new       : std_logic;                    --! new data from wishbone ITF
+        signal tx_empty     : std_logic;                    --! uart core is ready for new data
         -- FIFO & Flow control
         signal rx_new           : std_logic;    --! New receive data available flag
         signal rx_new_set       : std_logic;    --! set rx_new
@@ -207,13 +207,13 @@ architecture rtl of tiny_uart_wb32 is
         signal irq_ena          : std_logic;    --! IRQ signaling enabled
         signal tx_empty_dly1    : std_logic;    --! set IRQ only one time
         -- Register
-        signal reg_status_control   : std_logic_vector(7 downto 0); --! read path Status/Control register
-        signal reg_fifo             : std_logic_vector(7 downto 0); --! read path FIFO register
-        signal reg_cfg              : std_logic_vector(7 downto 0); --! read path silicon configuration
-        signal rd_data              : std_logic;                    --! read from data register     +cDATA
-        signal rd_sts               : std_logic;                    --! read from status register   +cSTS
-        signal rd_fifo              : std_logic;                    --! read from FIFO register     +cFIFO
-        signal rd_cfg               : std_logic;                    --! read from CFG register      +cCFG
+        signal reg_status   : std_logic_vector(7 downto 0); --! read path Status/Control register
+        signal reg_ctrl     : std_logic_vector(7 downto 0); --! read path FIFO register
+        signal reg_cfg      : std_logic_vector(7 downto 0); --! read path silicon configuration
+        signal rd_data      : std_logic;                    --! read from data register     +cDATA
+        signal rd_sts       : std_logic;                    --! read from status register   +cSTS
+        signal rd_ctrl      : std_logic;                    --! read from FIFO register     +cCTRL
+        signal rd_cfg       : std_logic;                    --! read from CFG register      +cCFG
         -- wishbone ITF
         signal ack      : std_logic;    --! wishbone acknowledge
         signal wr       : std_logic;    --! write to UART
@@ -229,8 +229,6 @@ architecture rtl of tiny_uart_wb32 is
         signal pe_set   : std_logic;    --! set PE flag
         signal pe_rst   : std_logic;    --! reset PE flag
     ----------------------------------------------
-
-
 
 begin
 
@@ -256,20 +254,20 @@ begin
         -- @see Illustration 3-5: Classic standard SINGLE READ cycle, wbspec_b4.pdf
         wr      <= STB_I and CYC_I and ack and WE_I;        --! internal write signal
         rd      <= STB_I and CYC_I and ack and (not WE_I);  --! read from UART
-        rd_data <= rd and SEL_I(cDATA); --! read from data register     +0x0
-        rd_sts  <= rd and SEL_I(cSTS);  --! read from status register   +0x1
-        rd_fifo <= rd and SEL_I(cFIFO); --! read from FIFO register     +0x2
-        rd_cfg  <= rd and SEL_I(cCFG);  --! read from configuration     +0x3
+        rd_data <= rd and SEL_I(cDATA); --! data register     +0x0
+        rd_sts  <= rd and SEL_I(cSTS);  --! status register   +0x1
+        rd_ctrl <= rd and SEL_I(cCTRL); --! control register  +0x2
+        rd_cfg  <= rd and SEL_I(cCFG);  --! configuration     +0x3
         -- IRQ
         IRQ <= irq_i and irq_ena;   --! signal IRQ only when interrupt is enabled
         --***************************
 
         --***************************
         -- Data output
-        DAT_O(cDATA*8+7 downto cDATA*8) <= rx_data              when ( '1' = rd_data )  else (others => '0');   --! enable byte on bus
-        DAT_O(cSTS*8+7 downto cSTS*8)   <= reg_status_control   when ( '1' = rd_sts )   else (others => '0');   --!
-        DAT_O(cFIFO*8+7 downto cFIFO*8) <= reg_fifo             when ( '1' = rd_fifo )  else (others => '0');   --!
-        DAT_O(cCFG*8+7 downto cCFG*8)   <= reg_cfg              when ( '1' = rd_cfg )   else (others => '0');   --!
+        DAT_O(cDATA*8+7 downto cDATA*8) <= rx_data      when ( '1' = rd_data )  else (others => '0');   --! enable byte on bus
+        DAT_O(cSTS*8+7 downto cSTS*8)   <= reg_status   when ( '1' = rd_sts )   else (others => '0');   --!
+        DAT_O(cCTRL*8+7 downto cCTRL*8) <= reg_ctrl     when ( '1' = rd_ctrl )  else (others => '0');   --!
+        DAT_O(cCFG*8+7 downto cCFG*8)   <= reg_cfg      when ( '1' = rd_cfg )   else (others => '0');   --!
         --***************************
 
         --***************************
@@ -371,26 +369,26 @@ begin
         rx_new_rst <= rd_data;  --! read from UART core
             -- RFO
         rfo_set <= rx_new and rx_new_set;
-        rfo_rst <= wr and SEL_I(cFIFO) and (not DAT_I(cFIFO*8+cRFO));   --! W0 for clear
+        rfo_rst <= wr and SEL_I(cCTRL) and (not DAT_I(cCTRL*8+cRFO));   --! W0 for clear
         --***************************
 
 
         --***************************
         -- Bit packing
-        --   Status Control
-        reg_status_control(7 downto 5)  <= "000";   --! RFU
-        reg_status_control(cPE)         <= pe_i;    --! parity error flag
-        reg_status_control(cFE)         <= fe_i;    --! framing error flag
-        reg_status_control(cBSY)        <= '0';     --! TODO
-        reg_status_control(cIRQ)        <= irq_i;   --! IRQ, R/W0
-        reg_status_control(cIE)         <= irq_ena; --! interrupt enable
-        --  FIFO // Dataflow
-        reg_fifo(cSZH downto cSZL)  <= std_logic_vector(to_unsigned(FIFO, cSZH-cSZL+1));    --! selected FIFO size
-        reg_fifo(cTFE)              <= tx_empty;                                            --! transmit FIFO empty
-        reg_fifo(cTFF)              <= not (tx_empty);                                      --! transmit FIFO full
-        reg_fifo(cRFO)              <= rfo;                                                 --! Receive FIFO overflow
-        reg_fifo(cRFE)              <= not (rx_new);                                        --! Receive FIFO empty
-        reg_fifo(cRFF)              <= rx_new;                                              --! receive FIFO full
+        --   Status
+        reg_status(cPE)     <= pe_i;            --! parity error flag
+        reg_status(cFE)     <= fe_i;            --! framing error flag
+        reg_status(cTFE)    <= tx_empty;        --! transmit FIFO empty
+        reg_status(cTFF)    <= not (tx_empty);  --! transmit FIFO full
+        reg_status(cRFO)    <= rfo;             --! Receive FIFO overflow
+        reg_status(cRFE)    <= not (rx_new);    --! Receive FIFO empty
+        reg_status(cRFF)    <= rx_new;          --! receive FIFO full
+        reg_status(cIRQ)    <= irq_i;           --! IRQ, R/W0
+        --  Control
+        reg_ctrl(7 downto 5)        <= "000";   --! RFU
+        reg_ctrl(cSZH downto cSZL)  <= std_logic_vector(to_unsigned(FIFO, cSZH-cSZL+1));    --! selected FIFO size
+        reg_ctrl(cBSY)              <= '0';     --! TODO
+        reg_ctrl(cIE)               <= irq_ena; --! interrupt enable
         -- Silicon Configuration
         reg_cfg(cTX)    <= '1'  when ( true = TXIMPL )  else '0';   --! Transmit path implemented
         reg_cfg(cRX)    <= '1'  when ( true = RXIMPL )  else '0';   --! Receive path implemented
