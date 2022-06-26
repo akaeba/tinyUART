@@ -280,7 +280,7 @@ begin
     ----------------------------------------------
     g_skip_tx : if ( false = TXIMPL ) generate
 
-        THRE    <= '0';
+        THRE    <= '1';
         TXD     <= '1';
         TRE     <= '0';
 
