@@ -376,14 +376,14 @@ begin
         --***************************
         -- Bit packing
         --   Status
-        reg_status(cPE)     <= pe_i;            --! parity error flag
-        reg_status(cFE)     <= fe_i;            --! framing error flag
-        reg_status(cTFE)    <= tx_empty;        --! transmit FIFO empty
-        reg_status(cTFF)    <= not (tx_empty);  --! transmit FIFO full
-        reg_status(cRFO)    <= rfo;             --! Receive FIFO overflow
-        reg_status(cRFE)    <= not (rx_new);    --! Receive FIFO empty
-        reg_status(cRFF)    <= rx_new;          --! receive FIFO full
-        reg_status(cIRQ)    <= irq_i;           --! IRQ, R/W0
+        reg_status(cPE)     <= pe_i             when ( true = RXIMPL ) else '0';    --! parity error flag
+        reg_status(cFE)     <= fe_i             when ( true = RXIMPL ) else '0';    --! framing error flag
+        reg_status(cTFE)    <= tx_empty         when ( true = TXIMPL ) else '1';    --! transmit FIFO empty
+        reg_status(cTFF)    <= not (tx_empty)   when ( true = TXIMPL ) else '0';    --! transmit FIFO full
+        reg_status(cRFO)    <= rfo              when ( true = RXIMPL ) else '0';    --! Receive FIFO overflow
+        reg_status(cRFE)    <= not (rx_new)     when ( true = RXIMPL ) else '1';    --! Receive FIFO empty
+        reg_status(cRFF)    <= rx_new           when ( true = RXIMPL ) else '0';    --! receive FIFO full
+        reg_status(cIRQ)    <= irq_i;                                               --! IRQ, R/W0
         --  Control
         reg_ctrl(7 downto 5)        <= "000";   --! RFU
         reg_ctrl(cSZH downto cSZL)  <= std_logic_vector(to_unsigned(FIFO, cSZH-cSZL+1));    --! selected FIFO size
