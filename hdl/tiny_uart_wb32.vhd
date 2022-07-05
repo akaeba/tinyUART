@@ -352,6 +352,7 @@ begin
         -- RSFF combinatoric
             -- IRQ
         irq_set <= rx_new_set or (tx_empty and (not tx_empty_dly1));    --! new rx value or rising edge of tx empty
+        irq_rst <= wr and SEL_I(cSTS) and (not DAT_I(cSTS*8+cIRQ));     --! W0 for clear
             -- FE
         fe_rst  <= wr and SEL_I(cSTS) and (not DAT_I(cSTS*8+cFE));  --! W0 for clear
             -- PE
@@ -414,7 +415,7 @@ begin
                         RXIMPL => RXIMPL        --! implement UART RX path
                     )
         port map    (
-                        R    => RST_I,                           	--! FF's with asynchrony reset
+                        R    => RST_I,                              --! FF's with asynchrony reset
                         C    => CLK_I,                              --! clock, rising edge
                         TXD  => TXD,                                --! serial transmit register output (START bit, DATA bits, PARITY bit, and STOP bits);     LSB First
                         RXD  => RXD,                                --! serial receive data;   LSB first
