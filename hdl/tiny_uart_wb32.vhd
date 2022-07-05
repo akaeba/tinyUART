@@ -125,8 +125,8 @@ library IEEE;
 entity tiny_uart_wb32 is
 generic (
             CLK     : positive              := 50_000_000;  --! UART clock frequency                        [ integer ]
-            BPS     : positive              := 115200;      --! transceive baud rate in Bps                 [ integer ]
-            FIFO    : integer range 0 to 3  := 0;           --! FIFO size                                   [ integer ]
+            BPS     : positive              := 115200;      --! transceiver baud rate in Bps                [ integer ]
+            FIFO    : integer range 0 to 3  := 0;           --! FIFO size, 2^(FIFO) in bytes                [ integer ]
             SBS     : integer range 1 to 2  := 1;           --! Stop bit select, only one/two stopbit       [ integer ]
             ENPA    : boolean               := false;       --! enable parity                               [ boolean ]
             ODDPA   : boolean               := false;       --! odd parity                                  [ boolean ]
@@ -197,7 +197,6 @@ architecture rtl of tiny_uart_wb32 is
     -- Signals
     ----------------------------------------------
         -- UART Core
-        signal rst_sync     : std_logic;
         signal rx_data      : std_logic_vector(7 downto 0); --! UART receive data
         signal tx_new       : std_logic;                    --! new data from wishbone ITF
         signal tx_empty     : std_logic;                    --! uart core is ready for new data
@@ -235,18 +234,6 @@ architecture rtl of tiny_uart_wb32 is
     ----------------------------------------------
 
 begin
-
-    ----------------------------------------------
-    -- Reset Synchronizer
-    ----------------------------------------------
-    p_rst : process( CLK_I )
-    begin
-        if ( rising_edge(CLK_I) ) then
-            rst_sync <= RST_I;  --! tiny UART uses FFs with asynchrony reset input
-        end if;
-    end process p_rst;
-    ----------------------------------------------
-
 
     ----------------------------------------------
     -- Wishbone ITF
@@ -427,7 +414,7 @@ begin
                         RXIMPL => RXIMPL        --! implement UART RX path
                     )
         port map    (
-                        R    => rst_sync,                           --! FF's with asynchrony reset
+                        R    => RST_I,                           	--! FF's with asynchrony reset
                         C    => CLK_I,                              --! clock, rising edge
                         TXD  => TXD,                                --! serial transmit register output (START bit, DATA bits, PARITY bit, and STOP bits);     LSB First
                         RXD  => RXD,                                --! serial receive data;   LSB first
