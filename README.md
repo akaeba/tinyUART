@@ -60,6 +60,7 @@ _Settable at compile time._
 | ---- | --- | ------ | --------------------------------------- |
 | R    | in  | 1b     | asynchronous reset                      |
 | C    | in  | 1b     | clock, rising-edge only                 |
+| CENA | in  | 1b     | clock enable, on ASIC always '1'        |
 | TXD  | out | 1b     | serial UART output                      |
 | RXD  | in  | 1b     | serial UART input                       |
 | RR   | out | 5b..8b | Receiver Holding Register Data Output   |
