@@ -106,6 +106,7 @@ begin
             port map    (
                             R       => R,
                             C       => C,
+                            CENA    => '1',
                             TXD     => TXD,
                             RXD     => RXD,
                             RR      => RR,

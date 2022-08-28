@@ -61,11 +61,12 @@ generic (
         );
 port    (
             -- Clock/Reset
-            R       : in    std_logic;          --! asynchrony reset
-            C       : in    std_logic;          --! clock, rising edge
+            R       : in    std_logic;  --! asynchrony reset
+            C       : in    std_logic;  --! clock, rising edge
+            CENA    : in    std_logic;  --! clock enable, can used for common clock divider
             -- serial UART Interface
-            TXD     : out   std_logic;          --! transmit register output (START bit, DATA bits, PARITY bit, and STOP bits);     LSB First
-            RXD     : in    std_logic;          --! receive data;   LSB first
+            TXD     : out   std_logic;  --! transmit register output (START bit, DATA bits, PARITY bit, and STOP bits);     LSB First
+            RXD     : in    std_logic;  --! receive data;   LSB first
             -- Parallel Interface
             RR      : out   std_logic_vector(WLS-1 downto 0);   --! Receiver Holding Register Data Output
             PE      : out   std_logic;                          --! Parity error
@@ -220,7 +221,7 @@ begin
             port map    (
                             R           => R,               --! asynchronous reset
                             C           => C,               --! clock, rising edge
-                            CENA        => '1',             --! clock enable, can used for common clock divider
+                            CENA        => CENA,            --! clock enable, can used for common clock divider
                             START       => tx_hold_new,     --! start interaction
                             BUSY        => bsy_tx,          --! transfer active
                             SFR_LD      => tx_sfr_ld,       --! load parallel input of shift register
@@ -307,7 +308,7 @@ begin
             port map    (
                             R    => R,      --! asynchronous reset
                             C    => C,      --! clock, rising edge
-                            CENA => '1',    --! clock enable, can used for common clock divider
+                            CENA => CENA,   --! clock enable, can used for common clock divider
                             INP  => RXD,    --! serial in
                             OUTP => rx_bit  --! synced & voted input bit
                         );
@@ -325,7 +326,7 @@ begin
             port map    (
                             R           => R,               --! asynchronous reset
                             C           => C,               --! clock, rising edge
-                            CENA        => '1',             --! clock enable, can used for common clock divider
+                            CENA        => CENA,            --! clock enable, can used for common clock divider
                             START       => rx_nedge,        --! start interaction
                             BUSY        => bsy_rx,          --! transfer active
                             SFR_LD      => open,            --! load parallel input of shift register
