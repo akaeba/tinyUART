@@ -31,7 +31,8 @@ library work;
 -- testbench
 entity tiny_uart_baud_bit_gen_tb is
 generic (
-            DO_ALL_TEST : boolean   := false        --! switch for enabling all tests
+            DO_ALL_TEST : boolean   := false;   --! switch for enabling all tests
+            CLKENA_DIV  : natural   := 0        --! every clock cycles is the clock enabled
         );
 end entity tiny_uart_baud_bit_gen_tb;
 --------------------------------------------------------------------------
@@ -64,6 +65,7 @@ architecture sim of tiny_uart_baud_bit_gen_tb is
         -- DUT
         signal R            : std_logic;
         signal C            : std_logic;
+        signal CENA         : std_logic;
         signal START        : std_logic;
         signal BUSY         : std_logic;
         signal SFR_LD       : std_logic;
@@ -87,6 +89,7 @@ begin
         port map    (
                         R           => R,
                         C           => C,
+                        CENA        => CENA,
                         START       => START,
                         BUSY        => BUSY,
                         SFR_LD      => SFR_LD,
@@ -124,68 +127,73 @@ begin
         if ( DO_ALL_TEST or do_test_0 ) then
             Report "Test0: Single shoot";
             wait until rising_edge(C); wait for tskew;
+            -- sync with CEA
+            while ( '0' = CENA ) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- start transfer
             START   <=  '1';
             wait until rising_edge(C); wait for tskew;
             START   <=  '0';
-            --
-            assert ( '1' = SFR_LD ) report "  Error: Failed Load TX SFR" severity warning;
+            while ( '0' = CENA ) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- Bit2
+            assert ( '1' = SFR_LD ) report "  Error:Bit2: SFR_LD=1 expected" severity warning;
             if not ( '1' = SFR_LD ) then good := false; end if;
-            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            assert ( '1' = SFR_S_BEGIN ) report "  Error:Bit2: SFR_S_BEGIN=1 expected" severity warning;
             if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            -- wait
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- middle of bit
+            assert ( '0' = SFR_S_BEGIN ) report "  Error:Bit2: SFR_S_BEGIN=0 expected" severity warning;
             if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
-            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error:Bit2: SFR_S_MIDLE=1 expected" severity warning;
             if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            --
-            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            -- wait
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- Bit1
+            assert ( '1' = SFR_S_BEGIN ) report "  Error:Bit1: SFR_S_BEGIN=1 expected" severity warning;
             if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
-            assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            assert ( '0' = SFR_S_MIDLE ) report "  Error:Bit1: SFR_S_BEGIN=1 expected" severity warning;
             if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            assert ( '0' = SFR_S_BEGIN ) report "  Error:Bit1: SFR_S_BEGIN=0 expected" severity warning;
             if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
-            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error:Bit1: SFR_S_MIDLE=1 expected" severity warning;
             if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            --
-            assert ( '1' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            -- Bit0
+            assert ( '1' = SFR_S_BEGIN ) report "  Error:Bit0: SFR_S_BEGIN=1 expected" severity warning;
             if not ( '1' = SFR_S_BEGIN ) then good := false; end if;
-            assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            assert ( '0' = SFR_S_MIDLE ) report "  Error:Bit0: SFR_S_BEGIN=1 expected" severity warning;
             if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
+            assert ( '0' = SFR_S_BEGIN ) report "  Error:Bit0: SFR_S_BEGIN=0 expected" severity warning;
             if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
-            assert ( '1' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
+            assert ( '1' = SFR_S_MIDLE ) report "  Error:Bit0: SFR_S_MIDLE=1 expected" severity warning;
             if not ( '1' = SFR_S_MIDLE ) then good := false; end if;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
-            wait until rising_edge(C); wait for tskew;
+            for i in 0 to (CLKDIV2*(CLKENA_DIV+1)-1) loop
+                wait until rising_edge(C); wait for tskew;
+            end loop;
             --
             assert ( '0' = SFR_S_BEGIN ) report "  Error: Failed Shift TX SFR" severity warning;
             if not ( '0' = SFR_S_BEGIN ) then good := false; end if;
             assert ( '0' = SFR_S_MIDLE ) report "  Error: Failed Shift RX SFR" severity warning;
             if not ( '0' = SFR_S_MIDLE ) then good := false; end if;
             --
-            assert ( BUSY'stable((2*CLKDIV2-1)*tclk) ) report "  Error: Busy unexpected toggled" severity warning;
-            if not ( BUSY'stable((2*CLKDIV2-1)*tclk) ) then good := false; end if;
+            assert ( BUSY'stable((2*CLKDIV2-1)*(CLKENA_DIV+1)*tclk) ) report "  Error: Busy unexpected toggled" severity warning;
+            if not ( BUSY'stable((2*CLKDIV2-1)*(CLKENA_DIV+1)*tclk) ) then good := false; end if;
             assert ( '1' = BUSY ) report "  Error: Needs to be busy" severity warning;
             if not ( '1' = BUSY ) then good := false; end if;
             while ( '1' = BUSY ) loop
@@ -202,7 +210,7 @@ begin
             if (good) then
                 Report "Test SUCCESSFUL";
             else
-                Report "Test FAILED" severity failure;
+                Report "Test FAILED" severity error;
             end if;
             wait until falling_edge(C); wait for tskew;
             CLKENA <= '0';
@@ -212,6 +220,25 @@ begin
     end process p_stimuli_process;
     ----------------------------------------------
 
+    ----------------------------------------------
+    -- clock divider
+    p_div : process ( C, R )
+        variable v_clkdiv : integer;
+    begin
+        if ( '1' = R ) then
+            CENA        <= '0';
+            v_clkdiv    := CLKENA_DIV;
+        elsif ( rising_edge(C) ) then
+            if ( 0 = v_clkdiv ) then
+                v_clkdiv    := CLKENA_DIV;
+                CENA        <= '1';
+            else
+                v_clkdiv    := v_clkdiv - 1;
+                CENA        <= '0';
+            end if;
+        end if;
+    end process p_div;
+    ----------------------------------------------
 
     ----------------------------------------------
     -- clock

@@ -42,6 +42,7 @@ port    (
             -- Clock/Reset
             R           : in    std_logic;  --! asynchronous reset
             C           : in    std_logic;  --! clock, rising edge
+            CENA        : in    std_logic;  --! clock enable, can used for common clock divider
             -- Control
             START       : in    std_logic;  --! start interaction
             BUSY        : out   std_logic;  --! transfer active
@@ -100,6 +101,8 @@ architecture rtl of tiny_uart_baud_bit_gen is
         -- FSM
         signal current_state    : t_tiny_uart_baud_bit; --! FSM state
         signal next_state       : t_tiny_uart_baud_bit; --! next state
+        signal start_rsff       : std_logic;            --! captured CENA start
+        signal start_i          : std_logic;            --! internal start signal
     ----------------------------------------------
 
 begin
@@ -118,21 +121,23 @@ begin
                 baud_half_per <= '1';               --! toggle FF
 
             elsif ( rising_edge(C) ) then
-                -- Baud generator
-                if ( '1' = baud_cntr_reset ) then
-                    baud_cntr_cnt <= (others => '0');
-                elsif ( '1' =  baud_cntr_preset ) then
-                    baud_cntr_cnt <= to_unsigned(CLKDIV2-1, baud_cntr_cnt'length);
-                elsif ( '1' = baud_cntr_en ) then
-                    baud_cntr_cnt <= baud_cntr_cnt-1;
+                -- common clock divider
+                if ( '1' = CENA ) then
+                    -- Baud generator
+                    if ( '1' = baud_cntr_reset ) then
+                        baud_cntr_cnt <= (others => '0');
+                    elsif ( '1' =  baud_cntr_preset ) then
+                        baud_cntr_cnt <= to_unsigned(CLKDIV2-1, baud_cntr_cnt'length);
+                    elsif ( '1' = baud_cntr_en ) then
+                        baud_cntr_cnt <= baud_cntr_cnt-1;
+                    end if;
+                    -- Baud half period
+                    if ( '1' = baud_cntr_reset ) then
+                        baud_half_per <= '1';   --! marks first half period of TBIT
+                    elsif ( '1' = baud_half_per_en ) then
+                        baud_half_per <= not baud_half_per;
+                    end if;
                 end if;
-                -- Baud half period
-                if ( '1' = baud_cntr_reset ) then
-                    baud_half_per <= '1';   --! marks first half period of TBIT
-                elsif ( '1' = baud_half_per_en ) then
-                    baud_half_per <= not baud_half_per;
-                end if;
-
             end if;
         end process p_baud_cntr;
         --***************************
@@ -175,13 +180,15 @@ begin
                 bit_cntr_cnt    <= (others => '0'); --! Reset
 
             elsif ( rising_edge(C) ) then
-                -- Control
-                if ( '1' = bit_cntr_preset ) then   --! next cycle
-                    bit_cntr_cnt <= to_unsigned(NUMBIT-1, bit_cntr_cnt'length);
-                elsif ( '1' = bit_cntr_en ) then    --! decrement
-                    bit_cntr_cnt <= bit_cntr_cnt-1;
+                -- common clock divider
+                if ( '1' = CENA ) then
+                    -- Control
+                    if ( '1' = bit_cntr_preset ) then   --! next cycle
+                        bit_cntr_cnt <= to_unsigned(NUMBIT-1, bit_cntr_cnt'length);
+                    elsif ( '1' = bit_cntr_en ) then    --! decrement
+                        bit_cntr_cnt <= bit_cntr_cnt-1;
+                    end if;
                 end if;
-
             end if;
         end process p_bit_cntr;
         --***************************
@@ -212,21 +219,38 @@ begin
         p_fsm_reg : process( R, C )
         begin
             if ( '1' = R ) then
-                current_state <= IDLE;
+                current_state   <= IDLE;
+                start_rsff      <= '0';
+
             elsif ( rising_edge(C) ) then
-                current_state <= next_state;
+                -- captures start in case of clock gate FSM disable
+                if ( ('1' = START) and ('0' = CENA) ) then
+                    start_rsff  <= '1';
+                elsif ( '1' = CENA ) then
+                    start_rsff  <= '0';
+                end if;
+                -- next registered state
+                if ( '1' = CENA ) then
+                    current_state <= next_state;
+                end if;
+
             end if;
         end process p_fsm_reg;
+        --***************************
+
+        --***************************
+        -- Start help logic
+        start_i <= START or start_rsff;
         --***************************
 
         --***************************
         -- next state calculation
         p_next_state : process  (
                                     current_state,      --! current FSM state
-                                    START,              --! start new transfer
+                                    start_i,            --! start new transfer
                                     baud_cntr_is_zero,  --! baud counter has reached target value
                                     bit_cntr_is_zero,   --! bit counter is zero
-                                    baud_half_per       --! 1: second half of periode
+                                    baud_half_per       --! 1: second half of period
                                 )
         begin
             -- default assignment
@@ -238,7 +262,7 @@ begin
                 --***************************
                 -- wait for start
                 when IDLE =>
-                    if ( '1' = START ) then
+                    if ( '1' = start_i ) then
                         next_state <= TRANSFER;
                     else
                         next_state <= IDLE;
@@ -249,12 +273,12 @@ begin
                 -- transmission
                 when TRANSFER =>
                     if ( ('1' = bit_cntr_is_zero) and ('1' = baud_cntr_is_zero) and ('0' = baud_half_per) ) then
-                        if ( '1' = START ) then         --! New data is available, run in next cycle
+                        if ( '1' = start_i ) then       --! New data is available, run in next cycle
                             next_state <= TRANSFER;
                         else                            --! no new data, go in force wait
                             if ( SKIP_LAST_BIT2 ) then  --! RX Mode
                                 next_state <= IDLE;
-                            else                        --! TX MOde
+                            else                        --! TX Mode
                                 next_state <= TFEND;
                             end if;
                         end if;
@@ -289,10 +313,10 @@ begin
     ----------------------------------------------
     -- Output
     ----------------------------------------------
-        SFR_LD      <= bit_cntr_preset;                                                 --! parallel load of TXD shift register
-        SFR_CAP     <= baud_cntr_preset and (not baud_half_per) and bit_cntr_is_zero;   --! capture RX SFR in parallel register
-        SFR_S_BEGIN <= baud_cntr_preset and baud_half_per;                              --! TX SFR: shift forward, begin of baud period
-        SFR_S_MIDLE <= baud_cntr_preset and (not baud_half_per);                        --! RX SFR: shift forward, middle of baud period
+        SFR_LD      <= CENA and bit_cntr_preset;                                                --! parallel load of TXD shift register, make only one clock cycle high
+        SFR_CAP     <= CENA and baud_cntr_preset and (not baud_half_per) and bit_cntr_is_zero;  --! capture RX SFR in parallel register
+        SFR_S_BEGIN <= CENA and baud_cntr_preset and baud_half_per;                             --! TX SFR: shift forward, begin of baud period
+        SFR_S_MIDLE <= CENA and baud_cntr_preset and (not baud_half_per);                       --! RX SFR: shift forward, middle of baud period
 
         BUSY <= '0' when ( IDLE = current_state ) else '1'; --! signal activity
     ----------------------------------------------
