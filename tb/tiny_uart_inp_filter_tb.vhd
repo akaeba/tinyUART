@@ -85,6 +85,7 @@ begin
             port map    (
                             R       => RST,
                             C       => CLK,
+                            CENA    => '1',
                             INP     => INP,
                             OUTP    => OUTP
                         );

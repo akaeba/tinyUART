@@ -220,8 +220,8 @@ begin
             port map    (
                             R           => R,               --! asynchronous reset
                             C           => C,               --! clock, rising edge
-                            CENA		=> '1',				--! clock enable, can used for common clock divider
-							START       => tx_hold_new,     --! start interaction
+                            CENA        => '1',             --! clock enable, can used for common clock divider
+                            START       => tx_hold_new,     --! start interaction
                             BUSY        => bsy_tx,          --! transfer active
                             SFR_LD      => tx_sfr_ld,       --! load parallel input of shift register
                             SFR_S_BEGIN => tx_sfr_shift,    --! shift pulse Tbit begin
@@ -307,6 +307,7 @@ begin
             port map    (
                             R    => R,      --! asynchronous reset
                             C    => C,      --! clock, rising edge
+                            CENA => '1',    --! clock enable, can used for common clock divider
                             INP  => RXD,    --! serial in
                             OUTP => rx_bit  --! synced & voted input bit
                         );
@@ -324,8 +325,8 @@ begin
             port map    (
                             R           => R,               --! asynchronous reset
                             C           => C,               --! clock, rising edge
-                            CENA		=> '1',				--! clock enable, can used for common clock divider
-							START       => rx_nedge,        --! start interaction
+                            CENA        => '1',             --! clock enable, can used for common clock divider
+                            START       => rx_nedge,        --! start interaction
                             BUSY        => bsy_rx,          --! transfer active
                             SFR_LD      => open,            --! load parallel input of shift register
                             SFR_S_BEGIN => open,            --! shift pulse Tbit begin

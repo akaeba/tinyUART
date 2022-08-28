@@ -45,6 +45,7 @@ port    (
             -- Clock/Reset
             R       : in    std_logic;  --! asynchronous reset
             C       : in    std_logic;  --! clock, rising edge
+            CENA    : in    std_logic;  --! clock enable, can used for common clock divider
             -- Data
             INP     : in    std_logic;  --! filter input
             OUTP    : out   std_logic   --! filter output
@@ -82,7 +83,9 @@ begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
                     sync_ffs <= (others => to_stdulogic(OUTP_RST));
                 elsif ( rising_edge(C) ) then
-                    sync_ffs <= sync_ffs(sync_ffs'left-1 downto sync_ffs'right) & INP;
+                    if ( '1' = CENA ) then  --! clock gate
+                        sync_ffs <= sync_ffs(sync_ffs'left-1 downto sync_ffs'right) & INP;
+                    end if;
                 end if;
             end process p_sync_ff;
             -- output
@@ -113,7 +116,9 @@ begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
                     voter_ffs <= (others => to_stdulogic(OUTP_RST));
                 elsif ( rising_edge(C) ) then
-                    voter_ffs <= voter_ffs(voter_ffs'left-1 downto voter_ffs'right) & synced;
+                    if ( '1' = CENA ) then  --! clock gate
+                        voter_ffs <= voter_ffs(voter_ffs'left-1 downto voter_ffs'right) & synced;
+                    end if;
                 end if;
             end process p_voter_ff;
             -- voter output
@@ -125,10 +130,12 @@ begin
                 if ( R = to_stdulogic(RST_ACTIVE) ) then
                     OUTP <= to_stdulogic(OUTP_RST);
                 elsif ( rising_edge(C) ) then
-                    if ( ('1' = rsff_set) and ('0' = rsff_reset) ) then
-                        OUTP <= '1';
-                    elsif ( ('0' = rsff_set) and ('1' = rsff_reset) ) then
-                        OUTP <= '0';
+                    if ( '1' = CENA ) then  --! clock gate
+                        if ( ('1' = rsff_set) and ('0' = rsff_reset) ) then
+                            OUTP <= '1';
+                        elsif ( ('0' = rsff_set) and ('1' = rsff_reset) ) then
+                            OUTP <= '0';
+                        end if;
                     end if;
                 end if;
             end process p_rsff;
