@@ -195,11 +195,11 @@ begin
         "  TBIT/2 clock div : " & integer'image(c_baud_clkdiv2)
     severity note;
     -- oversampling rate check
-    assert ( 2*c_baud_clkdiv2 > 15 )    --! rate too low
+    assert ( 2*c_baud_clkdiv2 > 10 )    --! rate too low
     report                                                                    character(LF) &
         "Oversampling Rate too low"                                         & character(LF) &
         "  Oversampling [is]        : " & integer'image(2*c_baud_clkdiv2)   & character(LF) &
-        "  Oversampling [recommend] : " & integer'image(16)
+        "  Oversampling [recommend] : " & integer'image(11)
     severity warning;
     ----------------------------------------------
 
