@@ -1,6 +1,6 @@
 # ************************************************************************
 #  @author:     Andreas Kaeberlein
-#  @copyright:  Copyright 2021
+#  @copyright:  Copyright 2023
 #  @credits:    AKAE
 #
 #  @license:    BSDv3
@@ -46,11 +46,12 @@ jobs:
         run: |
           ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_baud_bit_gen.vhd
           ghdl -a ${GHDL_OPTS} ./tb/tiny_uart_baud_bit_gen_tb.vhd
-          ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=0)  || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=0"; exit 1; fi)
           ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=1)  || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=1"; exit 1; fi)
           ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=2)  || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=2"; exit 1; fi)
+          ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=3)  || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=3"; exit 1; fi)
           ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=4)  || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=4"; exit 1; fi)
           ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=10) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=10"; exit 1; fi)
+          ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True -gCLKENA_DIV=11) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb CLKENA_DIV=11"; exit 1; fi)
       - name: tiny_uart
         run: |
           ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_inp_filter.vhd
