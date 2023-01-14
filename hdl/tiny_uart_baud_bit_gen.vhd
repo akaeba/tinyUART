@@ -101,8 +101,6 @@ architecture rtl of tiny_uart_baud_bit_gen is
         -- FSM
         signal current_state    : t_tiny_uart_baud_bit; --! FSM state
         signal next_state       : t_tiny_uart_baud_bit; --! next state
-        signal start_rsff       : std_logic;            --! captured CENA start
-        signal start_i          : std_logic;            --! internal start signal
     ----------------------------------------------
 
 begin
@@ -157,7 +155,7 @@ begin
                                 '1' when TFEND,     --! last half baud cycle
                                 '0' when others;    --! no count
 
-        with current_state select                                           --! toggle
+        with current_state select                                       --! toggle
             baud_half_per_en    <=  baud_cntr_is_zero   when TRANSFER,  --! marks first/second half periode
                                     '0'                 when others;    --! hold
 
@@ -220,37 +218,22 @@ begin
         begin
             if ( '1' = R ) then
                 current_state   <= IDLE;
-                start_rsff      <= '0';
-
             elsif ( rising_edge(C) ) then
-                -- captures start in case of clock gate FSM disable
-                if ( ('1' = START) and ('0' = CENA) ) then
-                    start_rsff  <= '1';
-                elsif ( '1' = CENA ) then
-                    start_rsff  <= '0';
-                end if;
-                -- next registered state
-                if ( '1' = CENA ) then
-                    current_state <= next_state;
-                end if;
-
+                current_state <= next_state;
             end if;
         end process p_fsm_reg;
         --***************************
 
-        --***************************
-        -- Start help logic
-        start_i <= START or start_rsff;
-        --***************************
 
         --***************************
         -- next state calculation
         p_next_state : process  (
                                     current_state,      --! current FSM state
-                                    start_i,            --! start new transfer
+                                    START,              --! start new transfer
                                     baud_cntr_is_zero,  --! baud counter has reached target value
                                     bit_cntr_is_zero,   --! bit counter is zero
-                                    baud_half_per       --! 1: second half of period
+                                    baud_half_per,      --! 1: second half of period
+                                    CENA                --! Step FSM forward when clock is enabled
                                 )
         begin
             -- default assignment
@@ -262,7 +245,7 @@ begin
                 --***************************
                 -- wait for start
                 when IDLE =>
-                    if ( '1' = start_i ) then
+                    if ( '1' = START ) then
                         next_state <= TRANSFER;
                     else
                         next_state <= IDLE;
@@ -272,8 +255,8 @@ begin
                 --***************************
                 -- transmission
                 when TRANSFER =>
-                    if ( ('1' = bit_cntr_is_zero) and ('1' = baud_cntr_is_zero) and ('0' = baud_half_per) ) then
-                        if ( '1' = start_i ) then       --! New data is available, run in next cycle
+                    if ( ('1' = bit_cntr_is_zero) and ('1' = baud_cntr_is_zero) and ('0' = baud_half_per) and ('1' = CENA) ) then
+                        if ( '1' = START ) then       --! New data is available, run in next cycle
                             next_state <= TRANSFER;
                         else                            --! no new data, go in force wait
                             if ( SKIP_LAST_BIT2 ) then  --! RX Mode
@@ -290,7 +273,7 @@ begin
                 --***************************
                 -- wait for transmission
                 when TFEND =>
-                    if ( '1' = baud_cntr_is_zero ) then
+                    if ( ('1' = baud_cntr_is_zero) and ('1' = CENA) ) then
                         next_state <= IDLE;
                     else
                         next_state <= TFEND;
