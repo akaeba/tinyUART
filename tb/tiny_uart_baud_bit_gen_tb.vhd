@@ -32,7 +32,7 @@ library work;
 entity tiny_uart_baud_bit_gen_tb is
 generic (
             DO_ALL_TEST : boolean   := false;   --! switch for enabling all tests
-            CLKENA_DIV  : positive  := 2        --! every clock cycles is the clock enabled
+            CLKENA_DIV  : positive  := 1        --! every clock cycles is the clock enabled
         );
 end entity tiny_uart_baud_bit_gen_tb;
 --------------------------------------------------------------------------
