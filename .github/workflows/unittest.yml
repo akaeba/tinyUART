@@ -29,9 +29,10 @@ jobs:
     env:
       GHDL_OPTS: "--std=93c --ieee=synopsys --time-resolution=ps --workdir=./sim/work"
     steps:
-      - uses: actions/checkout@v1
-      - uses: ghdl/setup-ghdl-ci@nightly
+      - uses: actions/checkout@v4
+      - uses: ghdl/setup-ghdl@v1
         with:
+          version: nightly
           backend: mcode
       - name: Prepare
         run: |
@@ -39,18 +40,18 @@ jobs:
           mkdir -p ./sim/work
       - name: tiny_uart_inp_filter
         run: |
-          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_inp_filter.vhd
-          ghdl -a ${GHDL_OPTS} ./tb/tiny_uart_inp_filter_tb.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/hdl/tiny_uart_inp_filter.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/tb/tiny_uart_inp_filter_tb.vhd
           ((ghdl -r ${GHDL_OPTS} tiny_uart_inp_filter_tb -gDO_ALL_TEST=True) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_inp_filter_tb"; exit 1; fi)
       - name: tiny_uart_baud_bit_gen
         run: |
-          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_baud_bit_gen.vhd
-          ghdl -a ${GHDL_OPTS} ./tb/tiny_uart_baud_bit_gen_tb.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/hdl/tiny_uart_baud_bit_gen.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/tb/tiny_uart_baud_bit_gen_tb.vhd
           ((ghdl -r ${GHDL_OPTS} tiny_uart_baud_bit_gen_tb -gDO_ALL_TEST=True) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_baud_bit_gen_tb"; exit 1; fi)
       - name: tiny_uart
         run: |
-          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_inp_filter.vhd
-          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart_baud_bit_gen.vhd
-          ghdl -a ${GHDL_OPTS} ./hdl/tiny_uart.vhd
-          ghdl -a ${GHDL_OPTS} ./tb/tiny_uart_tb.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/hdl/tiny_uart_inp_filter.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/hdl/tiny_uart_baud_bit_gen.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/hdl/tiny_uart.vhd
+          ghdl -a ${GHDL_OPTS} ${GITHUB_WORKSPACE}/tb/tiny_uart_tb.vhd
           ((ghdl -r ${GHDL_OPTS} tiny_uart_tb -gDO_ALL_TEST=True) || if [ $? -ne 0 ]; then echo "[ FAIL ]   tiny_uart_tb"; exit 1; fi)
